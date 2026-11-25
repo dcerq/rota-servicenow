@@ -1,6 +1,11 @@
 # Rota ServiceNow: ITAM, ITOM e CMDB
 
-Checklist de estudos ServiceNow em cinco fases: base da plataforma, CMDB e CSDM, ITAM, ITOM Visibility e próximas camadas. É uma página estática publicada no GitHub Pages, com o progresso salvo no Firebase.
+Plataforma pessoal de estudos ServiceNow, publicada no GitHub Pages, com o progresso salvo no Firebase. Tem quatro páginas:
+
+- **Início:** próximo passo, lista "Para fazer", rotina, resumo de laboratórios e certificados, histórico.
+- **Rota:** checklist em cinco fases (base da plataforma, CMDB e CSDM, ITAM, ITOM Visibility e próximas camadas). Curso à esquerda, credencial à direita.
+- **Laboratórios:** exercícios guiados para fazer na PDI. O botão "Verificar na PDI" consulta a API Rota Labs instalada na instância e marca o que encontrar.
+- **Certificados:** vitrine das credenciais concluídas, com link do badge, para mostrar no LinkedIn.
 
 Página: https://dcerq.github.io/rota-servicenow/
 
@@ -10,7 +15,23 @@ Página: https://dcerq.github.io/rota-servicenow/
 | --- | --- |
 | `index.html` | A página inteira. A lista de fases e itens fica no começo do `<script>`, no bloco `EDITE AQUI`. |
 | `firebase-config.js` | Configuração do app Web do Firebase. Enquanto tiver `COLE_AQUI`, a página salva só no navegador. |
-| `firestore.rules` | Cópia das regras de segurança publicadas no Firestore. Só você escreve; qualquer pessoa com o link pode ler. |
+| `firestore.rules` | Cópia das regras de segurança publicadas no Firestore. Só você escreve; qualquer pessoa com o link pode ler o progresso. O endereço da PDI fica num documento só seu. |
+| `pdi/rota-labs-api.js` | Script da API Rota Labs, que fica na PDI e responde quais laboratórios foram feitos. |
+
+## Verificação dos laboratórios na PDI
+
+A página não guarda usuário nem senha da PDI. A verificação funciona assim:
+
+1. Na PDI existe a Scripted REST API **Rota Labs**, com o recurso `GET /status`. Ela só lê e devolve, para cada laboratório, `true` ou `false`. Nenhum registro sai da instância.
+2. Uma regra de CORS na PDI libera esse recurso apenas para `https://dcerq.github.io`.
+3. Em **Laboratórios**, você salva o endereço da PDI (fica só para você) e clica em **Verificar na PDI**.
+
+Limites que valem saber:
+
+- PDI hibernando não responde. Acorde a instância no Developer Portal e verifique de novo.
+- Se a PDI for recolhida por falta de uso e você pedir outra, a API precisa ser instalada de novo, e o endereço muda.
+- A verificação só marca laboratórios. Um laboratório que já estava marcado não é desmarcado se a PDI for apagada.
+- Os nomes entre aspas nos passos de cada laboratório são os que a API procura. Use exatamente esses nomes.
 
 ## O que já está configurado
 
@@ -45,12 +66,16 @@ No primeiro login com tudo liberado, o que você já tinha marcado naquele naveg
 ## Como os dados ficam no Firestore
 
 ```
-roadmaps/principal
+roadmaps/principal                      (leitura pública)
   donaUid
   itens: { "cis-df": { done: true, at: "2026-12-10", badge: "https://www.credly.com/badges/..." }, ... }
+  labs:  { "lab-classe": { done: true, at: "2026-12-02", via: "pdi" }, ... }
+  pdi:   { ultima: "2026-12-02T10:15:00Z", encontrados: 4 }
   atualizadoEm
 roadmaps/principal/historico/{evento}
-  item, titulo, acao (concluiu | desmarcou | badge | importou), em
+  item, titulo, acao (concluiu | desmarcou | badge | verificou | importou), em
+privado/pdi                             (só a dona)
+  url
 ```
 
 O plano gratuito do Firestore não tem backup automático. Para guardar uma cópia, use o botão **Baixar backup (JSON)** no rodapé da página.

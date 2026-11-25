@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Rota ServiceNow: ITAM, ITOM e CMDB</title>
-<meta name="description" content="Rota de estudos ServiceNow com foco em ITAM, ITOM e CMDB, seguindo o ServiceNow University.">
+<meta name="description" content="Rota de estudos ServiceNow com foco em ITAM, ITOM e CMDB: checklist, laboratórios na PDI e certificados.">
 <meta name="theme-color" content="#F2FAFC">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='2' y='2' width='28' height='28' rx='5' fill='%23fff' stroke='%23B9DCE6' stroke-width='2'/%3E%3Crect x='13' y='6' width='6' height='20' rx='3' fill='%230B93B8'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -27,6 +27,7 @@
     --linha-fundo: rgba(7, 59, 76, .16);
     --f-cond: "Barlow Semi Condensed", "Arial Narrow", system-ui, sans-serif;
     --f-txt: "Barlow", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --lateral: 232px;
   }
 
   * { box-sizing: border-box; }
@@ -42,9 +43,44 @@
   a:hover { color: var(--funda); }
   :focus-visible { outline: 3px solid var(--funda); outline-offset: 2px; border-radius: 4px; }
   .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  [hidden] { display: none !important; }
 
-  /* ---------- topo: parede de azulejos ---------- */
-  .topo {
+  /* ---------- estrutura: menu lateral + conteúdo ---------- */
+  .app { display: grid; grid-template-columns: var(--lateral) 1fr; min-height: 100vh; }
+  .lateral {
+    position: sticky; top: 0; height: 100vh;
+    display: flex; flex-direction: column; gap: 22px;
+    padding: 20px 14px 18px;
+    background: var(--branco);
+    border-right: 1px solid var(--rejunte-forte);
+  }
+  .marca { display: flex; align-items: center; gap: 10px; padding: 0 8px; text-decoration: none; color: var(--funda); font: 700 22px/1 var(--f-cond); }
+  .marca-boia { width: 12px; height: 26px; border-radius: 6px; background: var(--piscina); flex: none; }
+  .nav { display: grid; gap: 2px; }
+  .nav a {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    padding: 9px 10px; border-radius: 8px;
+    color: var(--tinta-2); text-decoration: none; font-weight: 500;
+  }
+  .nav a:hover { background: var(--azulejo); color: var(--funda); }
+  .nav a[aria-current="page"] { background: var(--raia); color: var(--funda); font-weight: 600; }
+  .nav-n { font: 600 13px/1 var(--f-cond); color: var(--tinta-2); }
+  .lateral-grupo { display: grid; gap: 2px; }
+  .lateral-grupo h2 { margin: 0 0 4px; padding: 0 10px; font: 600 14px/1.2 var(--f-cond); color: var(--tinta-2); }
+  .lateral-grupo a { padding: 6px 10px; border-radius: 8px; font-size: 15px; color: var(--tinta-2); text-decoration: none; }
+  .lateral-grupo a:hover { background: var(--azulejo); color: var(--funda); }
+  .lateral-pe { margin-top: auto; padding: 12px 10px 0; border-top: 1px solid var(--rejunte); display: grid; gap: 8px; }
+  .dona { margin: 0; font: 600 16px/1.2 var(--f-cond); }
+
+  .sync { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 13px; color: var(--tinta-2); }
+  .sync-estado { background: var(--azulejo); border: 1px solid var(--rejunte-forte); border-radius: 999px; padding: 3px 10px; }
+  .sync-estado[data-tom="ok"] { color: var(--piscina-texto); border-color: var(--piscina); background: var(--branco); }
+  .sync-estado[data-tom="erro"] { color: #8A3B12; border-color: #E2A27E; background: #FFF3EC; }
+
+  .conteudo { min-width: 0; }
+
+  /* ---------- faixa de azulejos no topo de cada página ---------- */
+  .faixa {
     background-color: var(--azulejo);
     background-image:
       linear-gradient(var(--rejunte) 1px, transparent 1px),
@@ -53,125 +89,110 @@
     background-position: -1px -1px;
     border-bottom: 1px solid var(--rejunte-forte);
   }
-  .topo-in { max-width: 1080px; margin: 0 auto; padding: 22px 24px 30px; }
-  .topo-linha { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
-  .dona { margin: 0; font: 600 17px/1.2 var(--f-cond); color: var(--tinta-2); }
-
-  .sync { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--tinta-2); }
-  .sync-estado { background: var(--branco); border: 1px solid var(--rejunte-forte); border-radius: 999px; padding: 4px 12px; }
-  .sync-estado[data-tom="ok"] { color: var(--piscina-texto); border-color: var(--piscina); }
-  .sync-estado[data-tom="erro"] { color: #8A3B12; border-color: #E2A27E; background: #FFF3EC; }
-
-  h1 {
-    margin: 26px 0 4px;
-    font: 700 clamp(46px, 8vw, 88px)/.95 var(--f-cond);
-    letter-spacing: -.012em;
-  }
-  .sub { margin: 10px 0 0; font-size: 18px; max-width: 52ch; color: var(--tinta-2); }
+  .faixa-in { max-width: 1040px; margin: 0 auto; padding: 26px 28px 28px; }
+  .data { margin: 0; font: 500 16px/1.2 var(--f-cond); color: var(--tinta-2); }
+  h1 { margin: 8px 0 0; font: 700 clamp(40px, 6vw, 72px)/.98 var(--f-cond); letter-spacing: -.012em; }
+  .sub { margin: 10px 0 0; font-size: 18px; max-width: 56ch; color: var(--tinta-2); }
 
   .btn {
     font: 600 14px/1 var(--f-txt);
-    padding: 9px 13px;
-    border-radius: 8px;
-    border: 1px solid var(--funda);
-    background: var(--branco);
-    color: var(--funda);
+    padding: 9px 13px; border-radius: 8px;
+    border: 1px solid var(--funda); background: var(--branco); color: var(--funda);
     cursor: pointer;
   }
   .btn:hover { background: var(--raia); }
+  .btn:disabled { opacity: .55; cursor: default; }
   .btn-cheio { background: var(--funda); color: var(--branco); }
   .btn-cheio:hover { background: #0C5068; }
+  .btn-peq { padding: 6px 10px; font-size: 13px; }
 
   /* ---------- a raia: cada boia é um item ---------- */
-  .raia-bloco { margin-top: 30px; }
+  .raia-bloco { margin-top: 26px; }
   .raia { position: relative; display: flex; gap: 14px; }
-  .raia::before {
-    content: ""; position: absolute; left: -6px; right: -6px; top: 13px;
-    height: 2px; background: var(--funda); opacity: .35;
-  }
+  .raia::before { content: ""; position: absolute; left: -6px; right: -6px; top: 13px; height: 2px; background: var(--funda); opacity: .35; }
   .grupo { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
   .contas { display: flex; gap: 3px; }
   .conta {
     position: relative; z-index: 1;
     flex: 1 1 0; min-width: 5px; max-width: 18px; height: 28px;
-    border-radius: 7px;
-    background: var(--branco);
-    border: 2px solid var(--borda-chk);
-    cursor: pointer;
+    border-radius: 7px; background: var(--branco); border: 2px solid var(--borda-chk); cursor: pointer;
   }
   .conta.feita { background: var(--piscina); border-color: var(--piscina); }
   .conta.agora { background: var(--boia); border-color: var(--funda); }
   .grupo-n { font: 600 13px/1 var(--f-cond); color: var(--tinta-2); }
-
   .raia.entrada .conta.feita { animation: encher .5s both; animation-delay: calc(var(--i) * 28ms); }
   @keyframes encher { from { background: var(--branco); border-color: var(--borda-chk); } }
-
   .raia-rodape { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px 24px; margin-top: 14px; }
   .contagem { margin: 0; font: 500 18px/1.2 var(--f-cond); }
   .contagem strong { font-size: 30px; font-weight: 700; }
   .legenda { display: flex; gap: 16px; margin: 0; padding: 0; list-style: none; font-size: 14px; color: var(--tinta-2); }
   .legenda li { display: flex; align-items: center; gap: 6px; }
-  .amostra { width: 9px; height: 18px; border-radius: 5px; border: 2px solid var(--borda-chk); background: var(--branco); }
+  .amostra { width: 9px; height: 18px; border-radius: 5px; border: 2px solid var(--borda-chk); background: var(--branco); flex: none; }
   .amostra.feita { background: var(--piscina); border-color: var(--piscina); }
   .amostra.agora { background: var(--boia); border-color: var(--funda); }
 
   .proximo {
-    margin-top: 22px;
-    display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
-    background: var(--branco);
-    border: 1px solid var(--rejunte-forte);
-    border-radius: 10px;
-    padding: 14px 16px;
+    margin-top: 22px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+    background: var(--branco); border: 1px solid var(--rejunte-forte); border-radius: 10px; padding: 14px 16px;
   }
-  .proximo .amostra { flex: none; }
   .proximo-txt { flex: 1 1 280px; margin: 0; }
   .proximo-txt a { font-weight: 600; color: var(--funda); }
   .proximo-txt span { display: block; font-size: 14px; color: var(--tinta-2); }
 
-  .aviso-uid {
-    margin-top: 16px; padding: 14px 16px;
-    background: var(--boia-clara); border: 1px solid #EBCB85; border-radius: 10px;
-  }
+  .aviso-uid { margin-top: 16px; padding: 14px 16px; background: var(--boia-clara); border: 1px solid #EBCB85; border-radius: 10px; }
   .aviso-uid p { margin: 0 0 8px; max-width: 70ch; }
   .aviso-uid code { font-size: 14px; background: var(--branco); padding: 2px 6px; border-radius: 4px; word-break: break-all; }
 
-  /* ---------- a rota ---------- */
-  main { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+  .pagina-in { max-width: 1040px; margin: 0 auto; padding: 28px 28px 72px; }
+
+  /* ---------- Início ---------- */
+  .painel { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+  .bloco { background: var(--branco); border: 1px solid var(--rejunte-forte); border-radius: 12px; padding: 16px 18px; }
+  .bloco h2 { margin: 0; font: 700 22px/1.2 var(--f-cond); }
+  .bloco-cab { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 10px; }
+  .bloco-cab a { font-weight: 600; font-size: 14px; }
+  .lado-dir { display: grid; gap: 14px; }
+  .lado-dir .bloco { padding: 14px 16px; }
+  .lado-dir h2 { font-size: 19px; }
+  .bloco p { margin: 0; }
+  .fazer { list-style: none; margin: 0; padding: 0; }
+  .fazer li { display: grid; grid-template-columns: 9px 1fr auto; gap: 12px; align-items: center; padding: 10px 0; border-top: 1px solid var(--rejunte); }
+  .fazer li:first-child { border-top: 0; }
+  .fazer a { font-weight: 600; color: var(--funda); text-decoration: none; }
+  .fazer a:hover { text-decoration: underline; }
+  .fazer small { display: block; color: var(--tinta-2); font-size: 14px; }
+  .medidor { display: flex; gap: 3px; margin-top: 10px; }
+  .medidor span { flex: 1; height: 8px; border-radius: 4px; background: var(--raia); border: 1px solid var(--rejunte-forte); }
+  .medidor span.cheio { background: var(--piscina); border-color: var(--piscina); }
+  .numero { font: 700 30px/1 var(--f-cond); }
+  .numero small { font: 500 16px/1 var(--f-cond); color: var(--tinta-2); }
+  .historico { margin-top: 32px; max-width: 680px; }
+  .historico h2 { font: 700 26px/1.1 var(--f-cond); margin: 0 0 12px; }
+  .historico ol { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--rejunte-forte); }
+  .historico li { display: grid; grid-template-columns: 96px 1fr; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--rejunte); }
+  .historico li.vazio { display: block; color: var(--tinta-2); }
+  .historico time { font: 600 15px/1.5 var(--f-cond); color: var(--tinta-2); }
+
+  /* ---------- Rota ---------- */
   .lados {
     position: sticky; top: 0; z-index: 5;
     display: grid; grid-template-columns: 1fr 72px 1fr;
-    padding: 12px 0;
-    background: rgba(242, 250, 252, .94);
-    backdrop-filter: blur(4px);
+    max-width: 1040px; margin: 0 auto; padding: 12px 28px;
+    background: rgba(242, 250, 252, .94); backdrop-filter: blur(4px);
     border-bottom: 1px solid var(--rejunte);
     font: 600 16px/1 var(--f-cond); color: var(--tinta-2);
   }
   .lados span:first-child { text-align: right; }
   .lados span:last-child { grid-column: 3; }
-
-  .rota { position: relative; padding: 36px 0 96px; }
-  /* faixa do fundo da piscina, com o T no fim */
-  .rota::before {
-    content: ""; position: absolute; top: 0; bottom: 48px; left: 50%;
-    width: 8px; margin-left: -4px; background: var(--linha-fundo);
-  }
-  .rota::after {
-    content: ""; position: absolute; bottom: 48px; left: 50%;
-    width: 76px; height: 8px; margin-left: -38px; background: var(--linha-fundo);
-  }
-
+  .rota { position: relative; max-width: 1040px; margin: 0 auto; padding: 36px 28px 96px; }
+  .rota::before { content: ""; position: absolute; top: 0; bottom: 48px; left: 50%; width: 8px; margin-left: -4px; background: var(--linha-fundo); }
+  .rota::after { content: ""; position: absolute; bottom: 48px; left: 50%; width: 76px; height: 8px; margin-left: -38px; background: var(--linha-fundo); }
   .fase { position: relative; margin-bottom: 64px; }
   .fase:last-child { margin-bottom: 0; }
-  .fase-cab {
-    position: relative; z-index: 1;
-    display: grid; justify-items: center; text-align: center;
-    margin-bottom: 26px;
-  }
+  .fase-cab { position: relative; z-index: 1; display: grid; justify-items: center; text-align: center; margin-bottom: 26px; }
   .ladrilho {
     width: 60px; height: 60px; display: grid; place-items: center;
-    background: var(--branco);
-    border: 2px solid var(--rejunte-forte);
-    border-radius: 6px;
+    background: var(--branco); border: 2px solid var(--rejunte-forte); border-radius: 6px;
     font: 700 34px/1 var(--f-cond); color: var(--piscina-texto);
   }
   .fase.completa .ladrilho { background: var(--piscina); border-color: var(--piscina); color: var(--branco); }
@@ -179,27 +200,20 @@
   .fase-cab h2 { margin: 0; font: 700 28px/1.1 var(--f-cond); }
   .fase-quando { margin: 4px 0 0; font: 500 16px/1.3 var(--f-cond); color: var(--tinta-2); }
   .fase-resumo { margin: 6px 0 0; color: var(--tinta-2); font-size: 15px; }
-
   .trilha { display: grid; grid-template-columns: 1fr 72px 1fr; align-items: start; }
   .col { display: flex; flex-direction: column; gap: 10px; }
   .col-estudo { grid-column: 1; }
   .col-cred { grid-column: 3; }
   .col-rotulo { margin: 0; }
 
-  .item {
-    position: relative;
-    background: var(--branco);
-    border: 1px solid var(--rejunte-forte);
-    border-radius: 10px;
-    padding: 12px 12px 10px 14px;
-  }
-  .item::after { content: ""; position: absolute; top: 22px; width: 33px; height: 2px; background: var(--rejunte-forte); }
+  .item, .lab { position: relative; background: var(--branco); border: 1px solid var(--rejunte-forte); border-radius: 10px; padding: 12px 12px 10px 14px; }
+  .trilha .item::after { content: ""; position: absolute; top: 22px; width: 33px; height: 2px; background: var(--rejunte-forte); }
   .col-estudo .item::after { right: -34px; }
   .col-cred .item::after { left: -34px; }
-  .item.feito { background: #F7FDFE; border-color: #A8D9E6; }
-  .item.feito .item-titulo { color: var(--tinta-2); }
-  .item.agora { border-color: var(--funda); box-shadow: 0 0 0 3px rgba(244, 185, 66, .6); }
-  .item.pulso { animation: pulso 1.2s ease-out; }
+  .item.feito, .lab.feito { background: #F7FDFE; border-color: #A8D9E6; }
+  .item.feito .item-titulo, .lab.feito .item-titulo { color: var(--tinta-2); }
+  .item.agora, .lab.agora { border-color: var(--funda); box-shadow: 0 0 0 3px rgba(244, 185, 66, .6); }
+  .pulso { animation: pulso 1.2s ease-out; }
   @keyframes pulso { 0% { box-shadow: 0 0 0 0 rgba(11, 147, 184, .55); } 100% { box-shadow: 0 0 0 14px rgba(11, 147, 184, 0); } }
 
   .item-linha { display: grid; grid-template-columns: 24px 1fr 30px; gap: 10px; align-items: start; }
@@ -207,15 +221,13 @@
     appearance: none; -webkit-appearance: none;
     width: 22px; height: 22px; margin: 1px 0 0;
     display: grid; place-items: center;
-    border: 2px solid var(--borda-chk); border-radius: 6px;
-    background: var(--branco); cursor: pointer;
+    border: 2px solid var(--borda-chk); border-radius: 6px; background: var(--branco); cursor: pointer;
     transition: background-color .15s, border-color .15s;
   }
   .chk::after {
     content: ""; width: 6px; height: 11px; margin-top: -2px;
     border: solid var(--branco); border-width: 0 2.5px 2.5px 0;
-    transform: rotate(45deg) scale(.4); opacity: 0;
-    transition: transform .15s, opacity .15s;
+    transform: rotate(45deg) scale(.4); opacity: 0; transition: transform .15s, opacity .15s;
   }
   .chk:checked { background: var(--piscina); border-color: var(--piscina); }
   .chk:checked::after { opacity: 1; transform: rotate(45deg) scale(1); }
@@ -223,79 +235,113 @@
   .chk:disabled:not(:checked) { background: var(--azulejo); }
   .item-titulo { font-weight: 600; line-height: 1.35; cursor: pointer; padding-top: 1px; }
   .chk:disabled + .item-titulo { cursor: default; }
-  .abrir {
-    width: 30px; height: 30px; margin: -4px -4px 0 0;
-    display: grid; place-items: center;
-    border: 0; border-radius: 6px; background: transparent;
-    color: var(--tinta-2); cursor: pointer;
-  }
+  .abrir { width: 30px; height: 30px; margin: -4px -4px 0 0; display: grid; place-items: center; border: 0; border-radius: 6px; background: transparent; color: var(--tinta-2); cursor: pointer; }
   .abrir:hover { background: var(--raia); color: var(--funda); }
   .abrir svg { transition: transform .2s; }
   .abrir[aria-expanded="true"] svg { transform: rotate(180deg); }
 
   .item-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: 7px 0 0 34px; font-size: 14px; color: var(--tinta-2); }
-  .tipo {
-    font: 600 13px/1 var(--f-cond); letter-spacing: .01em;
-    padding: 4px 8px 3px; border-radius: 999px;
-    border: 1px solid var(--rejunte-forte); color: var(--piscina-texto);
-  }
-  .col-cred .tipo { background: var(--raia); border-color: var(--raia); }
-  .col-cred .tipo[data-tipo="Mainline"] { background: var(--funda); border-color: var(--funda); color: var(--branco); }
-  .col-cred .tipo[data-tipo="Suite"] { background: var(--branco); border: 1px dashed var(--borda-chk); }
+  .tipo { font: 600 13px/1 var(--f-cond); letter-spacing: .01em; padding: 4px 8px 3px; border-radius: 999px; border: 1px solid var(--rejunte-forte); color: var(--piscina-texto); }
+  .col-cred .tipo, .tipo.t-cred { background: var(--raia); border-color: var(--raia); }
+  .tipo[data-tipo="Mainline"] { background: var(--funda); border-color: var(--funda); color: var(--branco); }
+  .tipo[data-tipo="Suite"] { background: var(--branco); border: 1px dashed var(--borda-chk); }
+  .tipo[data-tipo="PDI"] { background: var(--branco); border-color: var(--piscina); }
   .feito-em { color: var(--piscina-texto); font-weight: 500; }
   .tag-agora { font: 600 13px/1 var(--f-cond); padding: 4px 8px 3px; border-radius: 999px; background: var(--boia); color: var(--funda); }
   .link-badge { font-weight: 600; }
 
   .det { margin: 10px 0 2px 34px; padding-top: 10px; border-top: 1px dashed var(--rejunte-forte); font-size: 15px; }
-  .det p { margin: 0 0 8px; max-width: 62ch; }
+  .det p { margin: 0 0 8px; max-width: 64ch; }
   .det .dica { background: var(--boia-clara); border-radius: 6px; padding: 8px 10px; }
   .det .regra { font-size: 14px; color: var(--tinta-2); }
+  .det ol { margin: 0 0 10px; padding-left: 22px; max-width: 64ch; }
+  .det ol li { margin-bottom: 4px; }
+  .det pre { margin: 6px 0 4px; padding: 10px 12px; background: var(--funda); color: #E3F5FA; border-radius: 8px; overflow-x: auto; font-size: 13px; line-height: 1.45; }
+  .det .pronto { padding: 8px 10px; border-left: 3px solid var(--piscina); background: var(--azulejo); border-radius: 0 6px 6px 0; }
   .campos { display: grid; gap: 8px; margin: 10px 0; }
   .campos label { display: grid; gap: 4px; font-size: 14px; color: var(--tinta-2); }
-  .campos input {
+  .campos input, .pdi-form input {
     font: inherit; font-size: 14px; color: var(--funda);
     padding: 7px 9px; border: 1px solid var(--rejunte-forte); border-radius: 6px; background: var(--branco);
     width: 100%; max-width: 340px;
   }
-  .campos input:focus { border-color: var(--piscina); }
+  .campos input:focus, .pdi-form input:focus { border-color: var(--piscina); }
   .campo-erro { color: #8A3B12; font-size: 13px; }
   .det-links { display: flex; flex-wrap: wrap; gap: 6px 18px; }
   .det-links a { font-weight: 600; font-size: 14px; }
 
-  /* ---------- histórico e rodapé ---------- */
-  .historico { max-width: 640px; margin: 0 auto 64px; }
-  .historico h2 { font: 700 28px/1.1 var(--f-cond); margin: 0 0 12px; }
-  .historico ol { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--rejunte-forte); }
-  .historico li { display: grid; grid-template-columns: 96px 1fr; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--rejunte); }
-  .historico time { font: 600 15px/1.5 var(--f-cond); color: var(--tinta-2); }
-  .historico li.vazio { display: block; color: var(--tinta-2); }
+  /* ---------- Laboratórios ---------- */
+  .pdi { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 14px 24px; align-items: end; }
+  .pdi h2 { font: 700 22px/1.2 var(--f-cond); margin: 0 0 6px; }
+  .pdi-form { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .pdi-form input { max-width: 360px; }
+  .pdi-estado { margin: 10px 0 0; font-size: 15px; color: var(--tinta-2); }
+  .pdi-estado[data-tom="erro"] { color: #8A3B12; }
+  .pdi-estado[data-tom="ok"] { color: var(--piscina-texto); }
+  .labs-fase { margin-top: 34px; }
+  .labs-fase-cab { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; }
+  .labs-fase-cab .ladrilho { width: 40px; height: 40px; font-size: 22px; }
+  .labs-fase-cab h2 { margin: 0; font: 700 24px/1.1 var(--f-cond); }
+  .labs-fase-cab p { margin: 2px 0 0; font: 500 15px/1.2 var(--f-cond); color: var(--tinta-2); }
+  .labs-lista { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; align-items: start; }
+
+  /* ---------- Certificados ---------- */
+  .vitrine { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+  .medalha { display: grid; grid-template-rows: auto 1fr auto; gap: 10px; background: var(--branco); border: 1px solid var(--rejunte-forte); border-radius: 12px; padding: 16px; }
+  .medalha-selo {
+    width: 84px; height: 84px; display: grid; place-items: center; text-align: center;
+    border-radius: 8px; border: 2px solid var(--piscina);
+    background-color: var(--raia);
+    background-image: linear-gradient(var(--rejunte-forte) 1px, transparent 1px), linear-gradient(90deg, var(--rejunte-forte) 1px, transparent 1px);
+    background-size: 21px 21px; background-position: -1px -1px;
+    font: 700 19px/1 var(--f-cond); color: var(--funda); padding: 4px;
+  }
+  .medalha[data-tipo="Mainline"] .medalha-selo { background: var(--funda); color: var(--branco); border-color: var(--funda); }
+  .medalha h3 { margin: 0; font: 700 19px/1.2 var(--f-cond); }
+  .medalha p { margin: 4px 0 0; font-size: 14px; color: var(--tinta-2); }
+  .medalha-links { display: flex; gap: 14px; flex-wrap: wrap; font-size: 14px; font-weight: 600; }
+  .vitrine-vazia { padding: 18px; border: 1px dashed var(--rejunte-forte); border-radius: 12px; color: var(--tinta-2); background: var(--branco); }
+  .proximas { margin-top: 36px; max-width: 680px; }
+  .proximas h2 { font: 700 26px/1.1 var(--f-cond); margin: 0 0 10px; }
+  .proximas ol { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--rejunte-forte); }
+  .proximas li { display: flex; justify-content: space-between; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--rejunte); }
+  .proximas li span { color: var(--tinta-2); font-size: 14px; white-space: nowrap; }
 
   footer { border-top: 1px solid var(--rejunte-forte); }
-  .rodape-in { max-width: 1080px; margin: 0 auto; padding: 20px 24px 40px; display: flex; justify-content: space-between; gap: 16px 32px; flex-wrap: wrap; font-size: 14px; color: var(--tinta-2); }
+  .rodape-in { max-width: 1040px; margin: 0 auto; padding: 20px 28px 40px; display: flex; justify-content: space-between; gap: 16px 32px; flex-wrap: wrap; font-size: 14px; color: var(--tinta-2); }
   .rodape-in p { margin: 0; max-width: 64ch; }
 
-  .tip {
-    position: fixed; z-index: 20; pointer-events: none;
-    max-width: 260px; padding: 7px 10px;
-    background: var(--funda); color: var(--branco);
-    border-radius: 6px; font-size: 13px; line-height: 1.35;
-  }
-  .tip[hidden] { display: none; }
+  .tip { position: fixed; z-index: 20; pointer-events: none; max-width: 260px; padding: 7px 10px; background: var(--funda); color: var(--branco); border-radius: 6px; font-size: 13px; line-height: 1.35; }
 
-  /* ---------- celular ---------- */
+  /* ---------- telas médias ---------- */
+  @media (max-width: 1080px) {
+    .painel { grid-template-columns: 1fr; }
+    .labs-lista { grid-template-columns: 1fr; }
+  }
+
+  /* ---------- celular: menu vira barra inferior ---------- */
   @media (max-width: 760px) {
-    .topo-in { padding: 18px 18px 24px; }
-    main { padding: 0 18px; }
-    .lados { display: none; }
-    .raia { gap: 8px; }
-    .rota { padding-top: 28px; }
-    .rota::before { left: 18px; margin-left: 0; }
-    .rota::after { left: 22px; margin-left: -30px; width: 60px; }
-    .fase-cab {
-      grid-template-columns: 44px 1fr; column-gap: 14px;
-      justify-items: start; text-align: left;
+    .app { grid-template-columns: 1fr; }
+    .lateral {
+      position: fixed; z-index: 30; inset: auto 0 0 0; height: auto;
+      flex-direction: row; padding: 6px 8px calc(6px + env(safe-area-inset-bottom));
+      border-right: 0; border-top: 1px solid var(--rejunte-forte);
     }
-    .ladrilho { width: 44px; height: 44px; font-size: 26px; }
+    .marca, .lateral-grupo, .lateral-pe { display: none; }
+    .nav { grid-template-columns: repeat(4, 1fr); width: 100%; }
+    .nav a { flex-direction: column; justify-content: center; gap: 2px; padding: 8px 4px; font-size: 13px; text-align: center; }
+    .nav-n { display: none; }
+    body { padding-bottom: 72px; }
+    .conteudo .topo-movel { display: flex; }
+    .faixa-in { padding: 18px 18px 22px; }
+    .pagina-in { padding: 22px 18px 48px; }
+    .raia { gap: 8px; }
+    .lados { display: none; }
+    .rota { padding: 28px 18px 72px; }
+    .rota::before { left: 36px; margin-left: 0; }
+    .rota::after { left: 40px; margin-left: -30px; width: 60px; }
+    .fase-cab { grid-template-columns: 44px 1fr; column-gap: 14px; justify-items: start; text-align: left; }
+    .fase-cab .ladrilho { width: 44px; height: 44px; font-size: 26px; }
     .fase-texto { margin: 0; padding: 0; background: none; }
     .fase-cab h2 { font-size: 24px; padding-top: 6px; }
     .fase-quando, .fase-resumo { margin-top: 2px; }
@@ -306,59 +352,162 @@
     .col-estudo .item::after, .col-cred .item::after { left: -31px; right: auto; width: 30px; }
     .item-meta, .det { margin-left: 0; }
     .historico li { grid-template-columns: 80px 1fr; }
+    .pdi { grid-template-columns: 1fr; }
+    .rodape-in { padding: 18px 18px 28px; }
   }
+  .topo-movel { display: none; justify-content: space-between; align-items: center; gap: 10px; padding: 10px 18px; background: var(--branco); border-bottom: 1px solid var(--rejunte-forte); }
+  .topo-movel .marca { display: flex; font-size: 20px; padding: 0; }
 
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; transition: none !important; }
-    html { scroll-behavior: auto; }
   }
 </style>
 </head>
 <body>
 
-<header class="topo">
-  <div class="topo-in">
-    <div class="topo-linha">
-      <p class="dona" id="dona">Daiane Cerqueira</p>
+<div class="app">
+  <aside class="lateral" aria-label="Menu">
+    <a class="marca" href="#/inicio"><span class="marca-boia" aria-hidden="true"></span>Rota ServiceNow</a>
+    <nav class="nav" aria-label="Páginas">
+      <a href="#/inicio" data-pag="inicio">Início</a>
+      <a href="#/rota" data-pag="rota">Rota <span class="nav-n" id="n-rota"></span></a>
+      <a href="#/laboratorios" data-pag="laboratorios">Laboratórios <span class="nav-n" id="n-labs"></span></a>
+      <a href="#/certificados" data-pag="certificados">Certificados <span class="nav-n" id="n-cert"></span></a>
+    </nav>
+    <div class="lateral-grupo">
+      <h2>Links</h2>
+      <a href="https://learning.servicenow.com" target="_blank" rel="noopener">ServiceNow University</a>
+      <a href="https://developer.servicenow.com" target="_blank" rel="noopener">Developer Portal (PDI)</a>
+      <a href="https://www.credly.com/org/servicenow-new" target="_blank" rel="noopener">Badges no Credly</a>
+    </div>
+    <div class="lateral-pe">
+      <p class="dona" id="dona"></p>
       <div class="sync" id="sync" aria-live="polite"></div>
     </div>
+  </aside>
 
-    <h1>Rota ServiceNow</h1>
-    <p class="sub">ITAM, ITOM e CMDB pelo ServiceNow University. Curso primeiro, credencial depois.</p>
-
-    <div class="raia-bloco">
-      <div class="raia entrada" id="raia" aria-hidden="true"></div>
-      <div class="raia-rodape">
-        <p class="contagem" id="contagem"></p>
-        <ul class="legenda" aria-hidden="true">
-          <li><span class="amostra feita"></span>Concluído</li>
-          <li><span class="amostra agora"></span>Próximo</li>
-          <li><span class="amostra"></span>A fazer</li>
-        </ul>
-      </div>
+  <div class="conteudo">
+    <div class="topo-movel">
+      <a class="marca" href="#/inicio"><span class="marca-boia" aria-hidden="true"></span>Rota ServiceNow</a>
+      <div class="sync" id="sync-movel"></div>
     </div>
 
-    <div class="proximo" id="proximo"></div>
-    <div class="aviso-uid" id="aviso-uid" hidden></div>
+    <!-- ===== Início ===== -->
+    <section class="pagina" data-pagina="inicio" aria-labelledby="t-inicio">
+      <header class="faixa">
+        <div class="faixa-in">
+          <p class="data" id="hoje"></p>
+          <h1 id="t-inicio"></h1>
+          <p class="sub" id="inicio-sub"></p>
+          <div class="raia-bloco">
+            <div class="raia entrada" id="raia" aria-hidden="true"></div>
+            <div class="raia-rodape">
+              <p class="contagem" id="contagem"></p>
+              <ul class="legenda" aria-hidden="true">
+                <li><span class="amostra feita"></span>Concluído</li>
+                <li><span class="amostra agora"></span>Próximo</li>
+                <li><span class="amostra"></span>A fazer</li>
+              </ul>
+            </div>
+          </div>
+          <div class="proximo" id="proximo"></div>
+          <div class="aviso-uid" id="aviso-uid" hidden></div>
+        </div>
+      </header>
+      <div class="pagina-in">
+        <div class="painel">
+          <section class="bloco" aria-labelledby="t-fazer">
+            <div class="bloco-cab"><h2 id="t-fazer">Para fazer</h2><span class="nav-n" id="fazer-n"></span></div>
+            <ul class="fazer" id="fazer"></ul>
+          </section>
+          <div class="lado-dir">
+            <section class="bloco" aria-labelledby="t-rotina">
+              <div class="bloco-cab"><h2 id="t-rotina">Rotina</h2></div>
+              <p>1 hora por dia, antes das 9h. Quando não der, à noite.</p>
+              <p style="margin-top:10px" class="numero" id="semana"></p>
+            </section>
+            <section class="bloco" aria-labelledby="t-mini-labs">
+              <div class="bloco-cab"><h2 id="t-mini-labs">Laboratórios</h2><a href="#/laboratorios">Abrir</a></div>
+              <p class="numero" id="mini-labs"></p>
+              <div class="medidor" id="mini-labs-medidor" aria-hidden="true"></div>
+              <p style="margin-top:10px;font-size:14px;color:var(--tinta-2)" id="mini-pdi"></p>
+            </section>
+            <section class="bloco" aria-labelledby="t-mini-cert">
+              <div class="bloco-cab"><h2 id="t-mini-cert">Certificados</h2><a href="#/certificados">Ver</a></div>
+              <p class="numero" id="mini-cert"></p>
+              <p style="margin-top:6px;font-size:14px;color:var(--tinta-2)" id="mini-cert-ult"></p>
+            </section>
+          </div>
+        </div>
+        <section class="historico" aria-labelledby="t-hist">
+          <h2 id="t-hist">Histórico</h2>
+          <ol id="hist"></ol>
+        </section>
+      </div>
+    </section>
+
+    <!-- ===== Rota ===== -->
+    <section class="pagina" data-pagina="rota" aria-labelledby="t-rota" hidden>
+      <header class="faixa">
+        <div class="faixa-in">
+          <h1 id="t-rota">Rota de estudos</h1>
+          <p class="sub">Cinco fases pelo ServiceNow University. Curso à esquerda, credencial à direita, de cima para baixo.</p>
+        </div>
+      </header>
+      <div class="lados" aria-hidden="true"><span>Estudar</span><span>Credencial</span></div>
+      <div class="rota" id="rota"></div>
+    </section>
+
+    <!-- ===== Laboratórios ===== -->
+    <section class="pagina" data-pagina="laboratorios" aria-labelledby="t-labs" hidden>
+      <header class="faixa">
+        <div class="faixa-in">
+          <h1 id="t-labs">Laboratórios</h1>
+          <p class="sub">Exercícios para fazer na sua PDI, com nomes combinados. A verificação consulta a PDI e marca o que encontrar.</p>
+        </div>
+      </header>
+      <div class="pagina-in">
+        <section class="bloco pdi" id="pdi" aria-labelledby="t-pdi">
+          <div>
+            <h2 id="t-pdi">Sua PDI</h2>
+            <form class="pdi-form so-edicao" id="pdi-form" novalidate>
+              <label class="sr" for="pdi-url">Endereço da PDI</label>
+              <input id="pdi-url" type="text" inputmode="url" spellcheck="false" placeholder="https://dev123456.service-now.com" autocomplete="off">
+              <button class="btn" type="submit">Salvar endereço</button>
+            </form>
+            <p class="pdi-estado" id="pdi-estado"></p>
+          </div>
+          <div class="so-edicao"><button class="btn btn-cheio" type="button" id="verificar">Verificar na PDI</button></div>
+        </section>
+        <div id="labs"></div>
+      </div>
+    </section>
+
+    <!-- ===== Certificados ===== -->
+    <section class="pagina" data-pagina="certificados" aria-labelledby="t-cert" hidden>
+      <header class="faixa">
+        <div class="faixa-in">
+          <h1 id="t-cert">Certificados</h1>
+          <p class="sub" id="cert-sub"></p>
+        </div>
+      </header>
+      <div class="pagina-in">
+        <div class="vitrine" id="vitrine"></div>
+        <section class="proximas" aria-labelledby="t-prox">
+          <h2 id="t-prox">Próximas credenciais</h2>
+          <ol id="proximas"></ol>
+        </section>
+      </div>
+    </section>
+
+    <footer>
+      <div class="rodape-in">
+        <p>Lista montada em novembro de 2026 a partir do ServiceNow University, da ServiceNow Community e dos badges da ServiceNow no Credly. Nomes e requisitos mudam a cada release: confira antes de agendar uma prova.</p>
+        <p><button class="btn" id="baixar" type="button">Baixar backup (JSON)</button></p>
+      </div>
+    </footer>
   </div>
-</header>
-
-<main>
-  <div class="lados" aria-hidden="true"><span>Estudar</span><span>Credencial</span></div>
-  <div class="rota" id="rota"></div>
-
-  <section class="historico" aria-labelledby="hist-titulo">
-    <h2 id="hist-titulo">Histórico</h2>
-    <ol id="hist"></ol>
-  </section>
-</main>
-
-<footer>
-  <div class="rodape-in">
-    <p>Lista montada em novembro de 2026 a partir do ServiceNow University e da ServiceNow Community. Nomes e requisitos mudam a cada release: confira no ServiceNow University antes de agendar uma prova.</p>
-    <p><button class="btn" id="baixar" type="button">Baixar backup (JSON)</button></p>
-  </div>
-</footer>
+</div>
 
 <div class="tip" id="tip" role="tooltip" hidden></div>
 
@@ -379,7 +528,7 @@ const FASES = [
         porque: 'Todo curso e simulador rende mais quando você repete o exercício na sua própria instância.',
         dica: 'A ServiceNow recolhe PDIs inativas. Entre nela pelo menos uma vez por semana.',
         link: 'https://developer.servicenow.com', linkTexto: 'Abrir o Developer Portal' },
-      { id: 'csa', lado: 'cred', tipo: 'Mainline', titulo: 'Certified System Administrator (CSA)', meta: '',
+      { id: 'csa', sigla: 'CSA', lado: 'cred', tipo: 'Mainline', titulo: 'Certified System Administrator (CSA)', meta: '',
         porque: 'Base exigida para as certificações de implementação (CIS).',
         inicial: { done: true, at: '2026-07' } },
       { id: 'mc-welcome', lado: 'cred', tipo: 'Micro-credential', titulo: 'Welcome to ServiceNow', meta: 'gratuito, rápido',
@@ -406,7 +555,7 @@ const FASES = [
         porque: 'Os domínios do CSDM e onde cada CI, aplicação e serviço se encaixa.' },
       { id: 'l-csdm5', lado: 'estudo', tipo: 'Leitura', titulo: 'White paper do CSDM 5', meta: 'leitura',
         porque: 'Quem passou na CIS-DF costuma indicar o documento como a melhor fonte sobre CSDM.' },
-      { id: 'cis-df', lado: 'cred', tipo: 'Mainline', titulo: 'CIS-Data Foundations (CMDB e CSDM)', meta: '75 questões em 90 min',
+      { id: 'cis-df', sigla: 'CIS-DF', lado: 'cred', tipo: 'Mainline', titulo: 'CIS-Data Foundations (CMDB e CSDM)', meta: '75 questões em 90 min',
         porque: 'Pré-requisito obrigatório de CIS-HAM, CIS-SAM, CIS-Discovery e CIS-Service Mapping.',
         dica: 'Você fez a prova em 25/09/2026. Se passou, marque e ajuste a data da aprovação aqui embaixo.',
         credly: 'https://www.credly.com/org/servicenow-new/badge/certified-implementation-specialist-data-foundation' },
@@ -422,11 +571,11 @@ const FASES = [
         porque: 'Ciclo de vida de hardware, estoque, modelos e contratos.' },
       { id: 's-ham', lado: 'estudo', tipo: 'Simulador', titulo: 'HAM Simulator', meta: 'on demand',
         porque: 'Cenário prático de HAM numa instância só sua.' },
-      { id: 'cis-ham', lado: 'cred', tipo: 'Mainline', titulo: 'CIS-Hardware Asset Management', meta: 'exige CIS-DF',
+      { id: 'cis-ham', sigla: 'CIS-HAM', lado: 'cred', tipo: 'Mainline', titulo: 'CIS-Hardware Asset Management', meta: 'exige CIS-DF',
         porque: 'Valida a implementação de HAM.' },
       { id: 'c-sam', lado: 'estudo', tipo: 'Curso', titulo: 'SAM Professional Fundamentals On Demand', meta: '',
         porque: 'Normalização, reconciliação e posição de licenças.' },
-      { id: 'cis-sam', lado: 'cred', tipo: 'Mainline', titulo: 'CIS-Software Asset Management', meta: 'exige CIS-DF',
+      { id: 'cis-sam', sigla: 'CIS-SAM', lado: 'cred', tipo: 'Mainline', titulo: 'CIS-Software Asset Management', meta: 'exige CIS-DF',
         porque: 'Valida a implementação de SAM: licenciamento, reconciliação e conformidade.' },
     ],
   },
@@ -440,11 +589,11 @@ const FASES = [
         porque: 'Base para a accreditation de ACC, que faz parte da suite ITOM Visibility.' },
       { id: 'acc-acc', lado: 'cred', tipo: 'Accreditation', titulo: 'Agent Client Collector (ACC) Delivery', meta: 'clientes e parceiros',
         porque: 'Instalar, configurar e resolver problemas do Agent Client Collector.' },
-      { id: 'cis-disco', lado: 'cred', tipo: 'Mainline', titulo: 'CIS-Discovery', meta: 'exige CIS-DF',
+      { id: 'cis-disco', sigla: 'CIS-Disco', lado: 'cred', tipo: 'Mainline', titulo: 'CIS-Discovery', meta: 'exige CIS-DF',
         porque: 'Valida a implementação de Discovery.' },
       { id: 'c-sm', lado: 'estudo', tipo: 'Curso', titulo: 'Service Mapping Fundamentals', meta: '',
         porque: 'Mapeamento top-down, por tags e por tráfego.' },
-      { id: 'cis-sm', lado: 'cred', tipo: 'Mainline', titulo: 'CIS-Service Mapping', meta: 'exige CIS-DF',
+      { id: 'cis-sm', sigla: 'CIS-SM', lado: 'cred', tipo: 'Mainline', titulo: 'CIS-Service Mapping', meta: 'exige CIS-DF',
         porque: 'Complementa Discovery e fecha a suite ITOM Visibility.' },
       { id: 'c-sgc', lado: 'estudo', tipo: 'Curso', titulo: 'Service Graph Connector Essentials', meta: 'learning path',
         porque: 'Como trazer dados de outras ferramentas para a CMDB sem duplicar CI.' },
@@ -458,7 +607,7 @@ const FASES = [
     itens: [
       { id: 'c-em', lado: 'estudo', tipo: 'Curso', titulo: 'Event Management Fundamentals', meta: '',
         porque: 'Eventos e alertas: a parte de saúde (ITOM Health).' },
-      { id: 'cis-em', lado: 'cred', tipo: 'Mainline', titulo: 'CIS-Event Management', meta: '',
+      { id: 'cis-em', sigla: 'CIS-EM', lado: 'cred', tipo: 'Mainline', titulo: 'CIS-Event Management', meta: '',
         porque: 'Valida a implementação de Event Management.' },
       { id: 'mc-ih', lado: 'cred', tipo: 'Micro-credential', titulo: 'Integration Hub', meta: 'gratuito',
         porque: 'Integrações e conectores, comuns em projetos de CMDB.' },
@@ -469,6 +618,135 @@ const FASES = [
     ],
   },
 ];
+/* ==========================================================================
+   Laboratórios na PDI. O "id" de cada um é o mesmo que a API Rota Labs devolve
+   (pdi/rota-labs-api.js). Os nomes entre aspas nos passos são os que a verificação procura.
+   ========================================================================== */
+const LABS = [
+  { id: 'lab-grupo', fase: 'base', titulo: 'Grupo de suporte da CMDB',
+    objetivo: 'Criar o grupo que vai ser dono dos CIs nos próximos laboratórios.',
+    passos: [
+      'Em User Administration > Groups, crie o grupo "Rota - Suporte CMDB".',
+      'Adicione você (ou um usuário de teste) como membro.',
+      'Se quiser, dê ao grupo a role itil.',
+    ],
+    pronto: 'O grupo "Rota - Suporte CMDB" existe e tem pelo menos um membro.' },
+  { id: 'lab-flow', fase: 'base', titulo: 'Flow: aviso de CI sem responsável',
+    objetivo: 'Praticar Flow Designer com um gatilho na CMDB.',
+    passos: [
+      'No Flow Designer, crie o flow "Rota - CI sem responsável".',
+      'Gatilho: registro criado em Computer [cmdb_ci_computer] com Managed by Group vazio.',
+      'Ação: crie uma tarefa (ou envie uma notificação) para o grupo "Rota - Suporte CMDB".',
+      'Ative o flow e teste criando um computador sem grupo.',
+    ],
+    pronto: 'O flow "Rota - CI sem responsável" existe e está ativo.' },
+  { id: 'lab-dashboard', fase: 'base', titulo: 'Dashboard de saúde da CMDB',
+    objetivo: 'Montar um dashboard simples no Platform Analytics.',
+    passos: [
+      'Em Platform Analytics > Dashboards, crie o dashboard "Rota - Saúde da CMDB".',
+      'Adicione um visual de CIs por classe e outro de CIs sem Managed by Group.',
+      'Compartilhe com o grupo "Rota - Suporte CMDB".',
+    ],
+    pronto: 'Existe um dashboard cujo nome começa com "Rota".' },
+
+  { id: 'lab-classe', fase: 'cmdb', titulo: 'Classe de CI própria',
+    objetivo: 'Entender herança de classes no CI Class Manager.',
+    passos: [
+      'Abra Configuration > CI Class Manager.',
+      'Crie a classe "Rota Appliance" como filha de Hardware [cmdb_ci_hardware], com o nome de tabela u_cmdb_ci_rota_appliance.',
+      'Veja os atributos herdados e adicione um atributo próprio, por exemplo "Posição no rack".',
+    ],
+    pronto: 'A tabela u_cmdb_ci_rota_appliance existe.' },
+  { id: 'lab-identificacao', fase: 'cmdb', titulo: 'Regra de identificação',
+    objetivo: 'Dizer ao IRE como reconhecer um CI dessa classe.',
+    passos: [
+      'No CI Class Manager, abra a classe Rota Appliance > Identification Rule.',
+      'Crie uma regra independente com uma entrada pelo Serial Number.',
+      'Salve e leia a ordem de prioridade das entradas.',
+    ],
+    pronto: 'Existe uma regra de identificação aplicada a u_cmdb_ci_rota_appliance.' },
+  { id: 'lab-ire', fase: 'cmdb', titulo: 'IRE sem duplicar CI',
+    objetivo: 'Ver o Identification and Reconciliation Engine atualizar em vez de duplicar.',
+    passos: [
+      'Em System Definition > Scripts - Background, rode o código abaixo três vezes, trocando nome e serial (ROTA-001, ROTA-002, ROTA-003).',
+      'Rode de novo com um serial que já existe e confira que o CI foi atualizado, não duplicado.',
+    ],
+    codigo: "var entrada = { items: [{ className: 'u_cmdb_ci_rota_appliance',\n  values: { name: 'rota-app-01', serial_number: 'ROTA-001' } }] };\ngs.info(sn_cmdb.IdentificationEngine.createOrUpdateCI('ServiceNow', JSON.stringify(entrada)));",
+    pronto: 'Há pelo menos 3 CIs da classe e nenhum serial repetido.' },
+  { id: 'lab-dono', fase: 'cmdb', titulo: 'Dono para todos os CIs',
+    objetivo: 'Completude: nenhum CI sem grupo responsável.',
+    passos: [
+      'Abra u_cmdb_ci_rota_appliance.list.',
+      'Selecione todos e use Update Selected para preencher Managed by Group com "Rota - Suporte CMDB".',
+    ],
+    pronto: 'Nenhum CI da classe está sem Managed by Group.' },
+  { id: 'lab-csdm', fase: 'cmdb', titulo: 'CSDM: aplicação e serviço',
+    objetivo: 'Ligar o domínio de design ao de operação, como o CSDM pede.',
+    passos: [
+      'Crie a Business Application "Rota App" [cmdb_ci_business_app].',
+      'Crie o Application Service "Rota App PRD" [cmdb_ci_service_auto].',
+      'Relacione Rota App a Rota App PRD com Consumes::Consumed by.',
+      'Ligue um CI Rota Appliance ao serviço com Depends on::Used by.',
+    ],
+    pronto: '"Rota App" tem relacionamento com "Rota App PRD" em cmdb_rel_ci.' },
+
+  { id: 'lab-ativo', fase: 'itam', titulo: 'Modelo e ativo de hardware',
+    objetivo: 'Ver a ligação entre modelo, ativo e CI.',
+    passos: [
+      'Em Product Catalog > Product Models > Hardware Models, crie o modelo "Rota Laptop X1".',
+      'Em Asset > Portfolios > Hardware Assets, crie um ativo com esse modelo e um número de série.',
+      'Confira se o ativo gerou um CI e por quê (categoria do modelo).',
+    ],
+    pronto: 'Existe um ativo de hardware com o modelo "Rota Laptop X1".' },
+  { id: 'lab-ciclo', fase: 'itam', titulo: 'Ciclo de vida: do estoque ao uso',
+    objetivo: 'Mover um ativo entre estados como no dia a dia de HAM.',
+    passos: [
+      'Coloque o ativo Rota Laptop X1 em estoque (State: In stock, Substate: Available).',
+      'Atribua a um usuário e mude para In use.',
+      'Abra o CI vinculado e veja se o status acompanhou o ativo.',
+    ],
+    pronto: 'Um ativo "Rota Laptop X1" está In use e com Assigned to preenchido.' },
+  { id: 'lab-contrato', fase: 'itam', titulo: 'Contrato de garantia',
+    objetivo: 'Ligar contrato e ativo.',
+    passos: [
+      'Em Contract Management, crie um contrato do tipo Warranty com a descrição curta "Rota - Garantia X1".',
+      'Na lista relacionada de ativos cobertos, adicione o ativo Rota Laptop X1.',
+    ],
+    pronto: 'O contrato "Rota - Garantia X1" cobre pelo menos um ativo.' },
+  { id: 'lab-sam', fase: 'itam', titulo: 'Software: modelo e direito de uso',
+    objetivo: 'O básico de SAM: o que você tem direito de usar.',
+    passos: [
+      'Em Product Catalog > Product Models > Software Models, crie o modelo "Rota Office".',
+      'Cadastre um direito de uso (entitlement) para esse modelo com 10 direitos.',
+      'Se a PDI não tiver SAM Professional, ative o plugin pelo Developer Portal.',
+    ],
+    pronto: 'O modelo "Rota Office" existe e tem um direito de uso cadastrado.' },
+
+  { id: 'lab-mid', fase: 'itom', titulo: 'MID Server no ar',
+    objetivo: 'A peça que leva o Discovery até a rede.',
+    passos: [
+      'Na PDI, crie um usuário com a role mid_server.',
+      'Baixe o MID Server em MID Server > Downloads e instale no seu computador.',
+      'Configure com a URL da PDI e o usuário criado, inicie o serviço e valide o MID Server.',
+    ],
+    pronto: 'Um MID Server está Up e validado.' },
+  { id: 'lab-discovery', fase: 'itom', titulo: 'Discovery na sua rede',
+    objetivo: 'Rodar um Discovery de ponta a ponta.',
+    passos: [
+      'Ative o plugin Discovery na PDI, se ainda não estiver ativo.',
+      'Cadastre credenciais em Discovery > Credentials para o que vai descobrir (Windows, SSH ou SNMP).',
+      'Crie o schedule "Rota - Rede local" com o seu MID Server e a faixa de IPs da sua própria rede, e rode.',
+    ],
+    pronto: 'Uma execução do schedule "Rota - Rede local" terminou como Completed.' },
+  { id: 'lab-ci-descoberto', fase: 'itom', titulo: 'CI encontrado pelo Discovery',
+    objetivo: 'Ler o resultado do Discovery com olhar de CMDB.',
+    passos: [
+      'Abra o Discovery Status da execução e veja os dispositivos encontrados.',
+      'Abra um CI descoberto e confira identificação, relacionamentos e Discovery source.',
+      'Compare com os CIs que você criou à mão no laboratório do IRE.',
+    ],
+    pronto: 'A execução "Rota - Rede local" gerou pelo menos um CI.' },
+];
 
 const REGRAS = {
   'Mainline': 'Prova supervisionada. Para manter, faça as provas delta periódicas. Antes de pagar, pergunte na Aoop se há voucher.',
@@ -478,11 +756,14 @@ const REGRAS = {
 };
 const UNIVERSITY = 'https://learning.servicenow.com';
 const CHAVE_LOCAL = 'rota-servicenow-v1';
-const DOC_ROTA = 'principal';   /* documento único da rota no Firestore: roadmaps/principal */
+const CHAVE_PDI = 'rota-servicenow-pdi';
+const DOC_ROTA = 'principal';           /* roadmaps/principal: progresso público */
+const CAMINHO_API = '/api/x_rota/rota_labs/status';  /* caminho da API Rota Labs na PDI */
 const VERSAO_FIREBASE = '13.4.0';
+const PAGINAS = ['inicio', 'rota', 'laboratorios', 'certificados'];
 
 /* ---------- configuração (firebase-config.js é opcional) ---------- */
-let cfg = { dona: 'Daiane Cerqueira', firebase: null };
+let cfg = { dona: 'Daiane Cerqueira', apelido: 'Daia', firebase: null };
 try {
   const m = await import('./firebase-config.js');
   if (m && m.default) cfg = { ...cfg, ...m.default };
@@ -492,6 +773,9 @@ const nuvemConfigurada = !!(cfg.firebase && cfg.firebase.apiKey && !/COLE/i.test
 /* ---------- dados derivados ---------- */
 const TODOS = FASES.flatMap((f, fi) => f.itens.map(it => ({ ...it, fase: f, faseN: fi + 1 })));
 const POR_ID = Object.fromEntries(TODOS.map(i => [i.id, i]));
+const FASE_POR_ID = Object.fromEntries(FASES.map((f, fi) => [f.id, { ...f, n: fi + 1 }]));
+const LAB_POR_ID = Object.fromEntries(LABS.map(l => [l.id, l]));
+const CREDS = TODOS.filter(i => i.lado === 'cred');
 
 function itensIniciais() {
   const o = {};
@@ -504,19 +788,24 @@ function lerLocal() {
 function gravarLocal() {
   try { localStorage.setItem(CHAVE_LOCAL, JSON.stringify(estado)); } catch (e) { /* navegador sem armazenamento */ }
 }
+function lerPdiLocal() { try { return localStorage.getItem(CHAVE_PDI) || ''; } catch (e) { return ''; } }
+function gravarPdiLocal(v) { try { localStorage.setItem(CHAVE_PDI, v); } catch (e) { /* sem armazenamento */ } }
 
 const salvo = lerLocal();
 const estado = {
   itens: { ...itensIniciais(), ...((salvo && salvo.itens) || {}) },
+  labs: (salvo && salvo.labs) || {},
+  pdi: (salvo && salvo.pdi) || {},
   log: (salvo && Array.isArray(salvo.log)) ? salvo.log : [],
 };
+let pdiUrl = lerPdiLocal();
+let verificando = false;
 
 /* modos: local | conectando | leitura | configurar | dona | outra */
 let modo = nuvemConfigurada ? 'conectando' : 'local';
 let erroAtual = '';
 let fb = null;
 let usuario = null;
-let donaUid = null;
 
 /* ---------- utilitários ---------- */
 const $ = s => document.querySelector(s);
@@ -532,9 +821,18 @@ function fmtData(s) {
   if (!d) return `${MESES[+m - 1]}/${a}`;
   return `${d}/${m}/${a}`;
 }
+function fmtDataHora(iso) {
+  if (!iso) return '';
+  try {
+    return new Date(iso).toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+  } catch (e) { return iso; }
+}
+function diasDesde(iso) { return iso ? Math.floor((Date.now() - new Date(iso).getTime()) / 864e5) : Infinity; }
 function feito(id) { return !!(estado.itens[id] && estado.itens[id].done); }
+function labFeito(id) { return !!(estado.labs[id] && estado.labs[id].done); }
 function podeEditar() { return modo === 'local' || modo === 'dona'; }
 function proximoItem() { return TODOS.find(i => i.tipo !== 'Suite' && !feito(i.id)); }
+function proximoLab() { return LABS.find(l => !labFeito(l.id)); }
 function el(tag, attrs = {}, ...filhos) {
   const n = document.createElement(tag);
   for (const [k, v] of Object.entries(attrs)) {
@@ -547,15 +845,16 @@ function el(tag, attrs = {}, ...filhos) {
   return n;
 }
 const reduzirMov = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-/* ---------- construção (uma vez) ---------- */
 const SETA = '<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 6l4.5 4.5L12.5 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+function botaoAbrir(alvoId, rotulo) {
+  const b = el('button', { class: 'abrir', type: 'button', 'aria-expanded': 'false', 'aria-controls': alvoId, 'aria-label': rotulo });
+  b.innerHTML = SETA;
+  return b;
+}
 
+/* ---------- construção: Rota ---------- */
 function cartao(it) {
   const chkId = `chk-${it.id}`, detId = `det-${it.id}`;
-  const abrir = el('button', { class: 'abrir', type: 'button', 'aria-expanded': 'false', 'aria-controls': detId, 'aria-label': `Detalhes de ${it.titulo}` });
-  abrir.innerHTML = SETA;
-
   const links = el('p', { class: 'det-links' });
   if (it.link) links.append(el('a', { href: it.link, target: '_blank', rel: 'noopener', text: it.linkTexto || 'Abrir' }));
   if (it.credly) links.append(el('a', { href: it.credly, target: '_blank', rel: 'noopener', text: 'Ver o badge oficial no Credly' }));
@@ -578,7 +877,7 @@ function cartao(it) {
     el('div', { class: 'item-linha' },
       el('input', { type: 'checkbox', class: 'chk', id: chkId, 'data-id': it.id }),
       el('label', { class: 'item-titulo', for: chkId, text: it.titulo }),
-      abrir,
+      botaoAbrir(detId, `Detalhes de ${it.titulo}`),
     ),
     el('p', { class: 'item-meta' },
       el('span', { class: 'tipo', 'data-tipo': it.tipo, text: it.tipo }),
@@ -591,17 +890,14 @@ function cartao(it) {
   );
 }
 
-function construir() {
-  $('#dona').textContent = cfg.dona || '';
+function construirRota() {
   const rota = $('#rota');
   const raia = $('#raia');
   let indice = 0;
-
   FASES.forEach((f, fi) => {
     const estudo = el('div', { class: 'col col-estudo' }, el('h3', { class: 'col-rotulo sr', text: 'Estudar' }));
     const cred = el('div', { class: 'col col-cred' }, el('h3', { class: 'col-rotulo sr', text: 'Credencial' }));
     f.itens.forEach(it => (it.lado === 'estudo' ? estudo : cred).append(cartao(it)));
-
     rota.append(el('section', { class: 'fase', id: `fase-${f.id}`, 'aria-labelledby': `fase-t-${f.id}` },
       el('header', { class: 'fase-cab' },
         el('div', { class: 'ladrilho', 'aria-hidden': 'true', text: String(fi + 1) }),
@@ -613,20 +909,67 @@ function construir() {
       ),
       el('div', { class: 'trilha' }, estudo, cred),
     ));
-
     const contas = el('div', { class: 'contas' });
     f.itens.forEach(it => contas.append(el('span', { class: 'conta', 'data-id': it.id, style: `--i:${indice++}` })));
-    const grupo = el('div', { class: 'grupo', style: `flex:${f.itens.length} 1 0` }, contas, el('span', { class: 'grupo-n', text: String(fi + 1) }));
-    raia.append(grupo);
+    raia.append(el('div', { class: 'grupo', style: `flex:${f.itens.length} 1 0` }, contas, el('span', { class: 'grupo-n', text: String(fi + 1) })));
   });
   setTimeout(() => raia.classList.remove('entrada'), 1600);
+}
+
+/* ---------- construção: Laboratórios ---------- */
+function cartaoLab(l) {
+  const chkId = `chk-${l.id}`, detId = `det-${l.id}`;
+  return el('article', { class: 'lab', id: `lab-${l.id}`, 'data-id': l.id },
+    el('div', { class: 'item-linha' },
+      el('input', { type: 'checkbox', class: 'chk chk-lab', id: chkId, 'data-id': l.id }),
+      el('label', { class: 'item-titulo', for: chkId, text: l.titulo }),
+      botaoAbrir(detId, `Passos de ${l.titulo}`),
+    ),
+    el('p', { class: 'item-meta' },
+      el('span', { class: 'tipo', 'data-tipo': 'PDI', text: 'PDI' }),
+      el('span', { class: 'meta-txt', text: l.objetivo }),
+      el('span', { class: 'feito-em' }),
+      el('span', { class: 'tag-agora', hidden: true, text: 'Próximo' }),
+    ),
+    el('div', { class: 'det', id: detId, hidden: true },
+      el('ol', {}, l.passos.map(p => el('li', { text: p }))),
+      l.codigo ? el('pre', {}, el('code', { text: l.codigo })) : null,
+      el('p', { class: 'pronto', text: `Pronto quando: ${l.pronto}` }),
+    ),
+  );
+}
+
+function construirLabs() {
+  const box = $('#labs');
+  FASES.forEach(f => {
+    const labs = LABS.filter(l => l.fase === f.id);
+    if (!labs.length) return;
+    const fa = FASE_POR_ID[f.id];
+    box.append(el('section', { class: 'labs-fase', 'aria-labelledby': `labs-t-${f.id}` },
+      el('div', { class: 'labs-fase-cab' },
+        el('div', { class: 'ladrilho', 'aria-hidden': 'true', text: String(fa.n) }),
+        el('div', {}, el('h2', { id: `labs-t-${f.id}`, text: f.titulo }), el('p', { class: 'labs-conta', 'data-fase': f.id })),
+      ),
+      el('div', { class: 'labs-lista' }, labs.map(cartaoLab)),
+    ));
+  });
+}
+
+function construir() {
+  $('#dona').textContent = cfg.dona || '';
+  construirRota();
+  construirLabs();
 }
 
 /* ---------- atualização (a cada mudança) ---------- */
 function atualizar() {
   const prox = proximoItem();
+  const proxLab = proximoLab();
   const editar = podeEditar();
 
+  document.querySelectorAll('.so-edicao').forEach(n => { n.hidden = !editar; });
+
+  /* itens da rota */
   document.querySelectorAll('.item').forEach(card => {
     const id = card.dataset.id;
     const d = estado.itens[id] || {};
@@ -640,7 +983,6 @@ function atualizar() {
     card.querySelector('.feito-em').textContent = ok && d.at ? `concluído em ${fmtData(d.at)}` : (ok ? 'concluído' : '');
     const lb = card.querySelector('.link-badge');
     if (d.badge) { lb.href = d.badge; lb.hidden = false; } else { lb.hidden = true; lb.removeAttribute('href'); }
-    card.querySelector('.so-edicao').hidden = !editar;
     const inData = card.querySelector('.in-data');
     if (document.activeElement !== inData) inData.value = (d.at && d.at.length === 10) ? d.at : '';
     const inBadge = card.querySelector('.in-badge');
@@ -653,6 +995,11 @@ function atualizar() {
     const sec = $(`#fase-${f.id}`);
     sec.classList.toggle('completa', n === total);
     sec.querySelector('.fase-conta').textContent = `${n} de ${total}`;
+    const lc = document.querySelector(`.labs-conta[data-fase="${f.id}"]`);
+    if (lc) {
+      const ls = LABS.filter(l => l.fase === f.id);
+      lc.textContent = `${ls.filter(l => labFeito(l.id)).length} de ${ls.length} laboratórios`;
+    }
   });
 
   document.querySelectorAll('.conta').forEach(c => {
@@ -661,9 +1008,49 @@ function atualizar() {
     c.classList.toggle('agora', !!prox && prox.id === id);
   });
 
-  const total = TODOS.length;
-  const n = TODOS.filter(i => feito(i.id)).length;
-  $('#contagem').innerHTML = `<strong>${n}</strong> de ${total} concluídos`;
+  /* laboratórios */
+  document.querySelectorAll('.lab').forEach(card => {
+    const id = card.dataset.id;
+    const d = estado.labs[id] || {};
+    const ok = !!d.done;
+    const chk = card.querySelector('.chk');
+    chk.checked = ok;
+    chk.disabled = !editar;
+    card.classList.toggle('feito', ok);
+    card.classList.toggle('agora', !!proxLab && proxLab.id === id);
+    card.querySelector('.tag-agora').hidden = !(proxLab && proxLab.id === id);
+    card.querySelector('.feito-em').textContent = ok
+      ? (d.via === 'pdi' ? `encontrado na PDI em ${fmtData(d.at)}` : `concluído em ${fmtData(d.at)}`)
+      : '';
+  });
+
+  const totalItens = TODOS.length;
+  const nItens = TODOS.filter(i => feito(i.id)).length;
+  const nLabs = LABS.filter(l => labFeito(l.id)).length;
+  const credsFeitas = CREDS.filter(i => feito(i.id));
+  $('#n-rota').textContent = `${nItens}/${totalItens}`;
+  $('#n-labs').textContent = `${nLabs}/${LABS.length}`;
+  $('#n-cert').textContent = String(credsFeitas.length);
+  $('#contagem').innerHTML = `<strong>${nItens}</strong> de ${totalItens} concluídos na rota`;
+
+  desenharInicio(prox, proxLab, editar, nLabs, credsFeitas);
+  desenharPdi(editar);
+  desenharCertificados(credsFeitas);
+  desenharHistorico();
+  desenharSync();
+}
+
+function desenharInicio(prox, proxLab, editar, nLabs, credsFeitas) {
+  const hora = +new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo', hour: 'numeric', hour12: false });
+  const saudacao = hora < 12 ? 'Bom dia' : (hora < 18 ? 'Boa tarde' : 'Boa noite');
+  $('#hoje').textContent = new Date().toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo', weekday: 'long', day: 'numeric', month: 'long' }).replace(/^./, c => c.toUpperCase());
+  if (editar) {
+    $('#t-inicio').textContent = `${saudacao}, ${cfg.apelido || cfg.dona}`;
+    $('#inicio-sub').textContent = 'ITAM, ITOM e CMDB pelo ServiceNow University. Curso primeiro, credencial depois, prática na PDI.';
+  } else {
+    $('#t-inicio').textContent = 'Rota ServiceNow';
+    $('#inicio-sub').textContent = `Progresso de ${cfg.dona} em ITAM, ITOM e CMDB: cursos, laboratórios e certificações.`;
+  }
 
   const box = $('#proximo');
   box.innerHTML = '';
@@ -671,7 +1058,7 @@ function atualizar() {
     box.append(
       el('span', { class: 'amostra agora', 'aria-hidden': 'true' }),
       el('p', { class: 'proximo-txt' },
-        'Agora: ', el('a', { href: `#item-${prox.id}`, 'data-ir': prox.id, text: prox.titulo }),
+        'Agora: ', el('a', { href: `#/rota`, 'data-ir': prox.id, text: prox.titulo }),
         el('span', { text: `Fase ${prox.faseN}, ${prox.fase.titulo}` })),
       editar ? el('button', { class: 'btn btn-cheio', type: 'button', id: 'marcar-prox', text: 'Marcar como concluído' }) : null,
     );
@@ -679,14 +1066,92 @@ function atualizar() {
     box.append(el('p', { class: 'proximo-txt', text: 'Rota completa. Hora de escolher a próxima camada.' }));
   }
 
-  desenharHistorico();
-  desenharSync();
+  /* Para fazer */
+  const lista = [];
+  if (editar && !pdiUrl) lista.push({ tipo: 'PDI', titulo: 'Cadastrar o endereço da sua PDI', sub: 'Laboratórios', ir: '#/laboratorios' });
+  else if (editar && pdiUrl && diasDesde(estado.pdi.ultima) >= 7) {
+    const d = diasDesde(estado.pdi.ultima);
+    lista.push({ tipo: 'PDI', titulo: 'Verificar os laboratórios na PDI', sub: d === Infinity ? 'Nunca verificado' : `Última verificação há ${d} dias`, ir: '#/laboratorios' });
+  }
+  TODOS.filter(i => i.tipo !== 'Suite' && !feito(i.id)).slice(0, 3)
+    .forEach(i => lista.push({ tipo: i.tipo, titulo: i.titulo, sub: `Fase ${i.faseN}, ${i.fase.titulo}`, item: i.id, cred: i.lado === 'cred' }));
+  LABS.filter(l => !labFeito(l.id)).slice(0, 2)
+    .forEach(l => lista.push({ tipo: 'PDI', titulo: l.titulo, sub: 'Laboratório', lab: l.id }));
+  const ul = $('#fazer');
+  ul.innerHTML = '';
+  $('#fazer-n').textContent = `${lista.length} itens`;
+  lista.forEach((x, k) => {
+    const href = x.ir || (x.lab ? '#/laboratorios' : '#/rota');
+    ul.append(el('li', {},
+      el('span', { class: `amostra${k === 0 && x.item && prox && x.item === prox.id ? ' agora' : ''}`, 'aria-hidden': 'true' }),
+      el('div', {}, el('a', { href, 'data-ir': x.item || null, 'data-ir-lab': x.lab || null, text: x.titulo }), el('small', { text: x.sub })),
+      el('span', { class: `tipo${x.cred ? ' t-cred' : ''}`, 'data-tipo': x.tipo, text: x.tipo }),
+    ));
+  });
+
+  /* Rotina: conclusões nos últimos 7 dias, pelo histórico */
+  const semana = estado.log.filter(ev => ev.acao === 'concluiu' && diasDesde(ev.em) < 7).length;
+  $('#semana').innerHTML = `${semana} <small>${semana === 1 ? 'conclusão' : 'conclusões'} nos últimos 7 dias</small>`;
+
+  /* Laboratórios */
+  $('#mini-labs').innerHTML = `${nLabs} <small>de ${LABS.length} feitos</small>`;
+  const med = $('#mini-labs-medidor');
+  med.innerHTML = '';
+  LABS.forEach(l => med.append(el('span', { class: labFeito(l.id) ? 'cheio' : '' })));
+  $('#mini-pdi').textContent = estado.pdi.ultima
+    ? `Última verificação na PDI: ${fmtDataHora(estado.pdi.ultima)}`
+    : (editar ? 'A PDI ainda não foi verificada.' : '');
+
+  /* Certificados */
+  $('#mini-cert').innerHTML = `${credsFeitas.length} <small>${credsFeitas.length === 1 ? 'credencial' : 'credenciais'}</small>`;
+  const ult = credsFeitas.slice().sort((a, b) => String((estado.itens[b.id] || {}).at || '').localeCompare(String((estado.itens[a.id] || {}).at || '')))[0];
+  $('#mini-cert-ult').textContent = ult ? `Mais recente: ${ult.titulo}` : '';
+}
+
+function desenharPdi(editar) {
+  const inp = $('#pdi-url');
+  if (document.activeElement !== inp) inp.value = pdiUrl;
+  $('#verificar').disabled = !pdiUrl || verificando;
+  $('#verificar').textContent = verificando ? 'Verificando...' : 'Verificar na PDI';
+  const st = $('#pdi-estado');
+  let txt = '', tom = '';
+  if (estado.pdi.erro && editar) { txt = estado.pdi.erro; tom = 'erro'; }
+  else if (estado.pdi.ultima) { txt = `Última verificação: ${fmtDataHora(estado.pdi.ultima)}. ${estado.pdi.encontrados} de ${LABS.length} laboratórios encontrados na PDI.`; tom = 'ok'; }
+  else if (editar) txt = pdiUrl ? 'Endereço salvo. Clique em "Verificar na PDI".' : 'Informe o endereço da sua PDI. Ele fica salvo só para você.';
+  else txt = 'Os laboratórios são marcados pela dona da rota, à mão ou pela verificação na PDI.';
+  st.textContent = txt;
+  st.dataset.tom = tom;
+}
+
+function desenharCertificados(credsFeitas) {
+  $('#cert-sub').textContent = `Credenciais ServiceNow de ${cfg.dona}. ${credsFeitas.length === 1 ? '1 conquistada' : `${credsFeitas.length} conquistadas`} até agora.`;
+  const box = $('#vitrine');
+  box.innerHTML = '';
+  const ordenadas = credsFeitas.slice().sort((a, b) => String((estado.itens[b.id] || {}).at || '').localeCompare(String((estado.itens[a.id] || {}).at || '')));
+  if (!ordenadas.length) box.append(el('p', { class: 'vitrine-vazia', text: 'Nenhuma credencial marcada ainda. Elas aparecem aqui quando você conclui um item da coluna Credencial.' }));
+  ordenadas.forEach(c => {
+    const d = estado.itens[c.id] || {};
+    const selo = c.sigla || ({ 'Micro-credential': 'Micro', 'Suite': 'Suite', 'Accreditation': 'Accred.' }[c.tipo] || c.tipo);
+    const links = el('p', { class: 'medalha-links' });
+    if (d.badge) links.append(el('a', { href: d.badge, target: '_blank', rel: 'noopener', text: 'Ver o badge' }));
+    else if (c.credly) links.append(el('a', { href: c.credly, target: '_blank', rel: 'noopener', text: 'Badge oficial no Credly' }));
+    box.append(el('article', { class: 'medalha', 'data-tipo': c.tipo },
+      el('div', { class: 'medalha-selo', 'aria-hidden': 'true', text: selo }),
+      el('div', {}, el('h3', { text: c.titulo }), el('p', { text: `${c.tipo}${d.at ? `, ${fmtData(d.at)}` : ''}` })),
+      links,
+    ));
+  });
+  const ol = $('#proximas');
+  ol.innerHTML = '';
+  CREDS.filter(c => !feito(c.id) && c.tipo !== 'Suite').slice(0, 6)
+    .forEach(c => ol.append(el('li', {}, el('strong', { text: c.titulo }), el('span', { text: `Fase ${c.faseN}` }))));
 }
 
 function textoAcao(ev) {
   if (ev.acao === 'concluiu') return ['Concluiu ', ev.titulo];
   if (ev.acao === 'desmarcou') return ['Desmarcou ', ev.titulo];
   if (ev.acao === 'badge') return ['Adicionou o badge de ', ev.titulo];
+  if (ev.acao === 'verificou') return ['Verificou a PDI: ', ev.titulo];
   if (ev.acao === 'importou') return ['Importou o checklist deste navegador', ''];
   return [ev.acao + ' ', ev.titulo];
 }
@@ -706,8 +1171,6 @@ function desenharHistorico() {
 }
 
 function desenharSync() {
-  const s = $('#sync');
-  s.innerHTML = '';
   const estados = {
     local: ['Salvo neste navegador', ''],
     conectando: ['Conectando ao Firebase', ''],
@@ -717,9 +1180,13 @@ function desenharSync() {
     outra: ['Esta conta só pode ver', ''],
   };
   const [txt, tom] = erroAtual ? [erroAtual, 'erro'] : (estados[modo] || ['', '']);
-  s.append(el('span', { class: 'sync-estado', 'data-tom': tom, text: txt }));
-  if (modo === 'leitura') s.append(el('button', { class: 'btn', type: 'button', id: 'entrar', text: 'Entrar com Google' }));
-  if (modo === 'dona' || modo === 'configurar' || modo === 'outra') s.append(el('button', { class: 'btn', type: 'button', id: 'sair', text: 'Sair' }));
+  ['#sync', '#sync-movel'].forEach(sel => {
+    const s = $(sel);
+    s.innerHTML = '';
+    s.append(el('span', { class: 'sync-estado', 'data-tom': tom, text: txt }));
+    if (modo === 'leitura') s.append(el('button', { class: 'btn btn-peq', type: 'button', 'data-acao': 'entrar', text: 'Entrar' }));
+    if (modo === 'dona' || modo === 'configurar' || modo === 'outra') s.append(el('button', { class: 'btn btn-peq', type: 'button', 'data-acao': 'sair', text: 'Sair' }));
+  });
 
   const aviso = $('#aviso-uid');
   if (modo === 'configurar' && usuario) {
@@ -734,35 +1201,65 @@ function desenharSync() {
   }
 }
 
+/* ---------- navegação entre páginas ---------- */
+function paginaAtual() {
+  const p = (location.hash.match(/^#\/([a-z]+)/) || [])[1];
+  return PAGINAS.includes(p) ? p : 'inicio';
+}
+function mostrarPagina(rolar = true) {
+  const p = paginaAtual();
+  document.querySelectorAll('.pagina').forEach(s => { s.hidden = s.dataset.pagina !== p; });
+  document.querySelectorAll('.nav a').forEach(a => {
+    if (a.dataset.pag === p) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
+  });
+  const nomes = { inicio: 'Início', rota: 'Rota', laboratorios: 'Laboratórios', certificados: 'Certificados' };
+  document.title = `${nomes[p]}: Rota ServiceNow`;
+  if (rolar) window.scrollTo(0, 0);
+}
+window.addEventListener('hashchange', () => mostrarPagina());
+
 /* ---------- ações ---------- */
 function registrarLocal(ev) {
   if (modo !== 'local') return;
   estado.log.unshift(ev);
   estado.log = estado.log.slice(0, 200);
 }
+function evento(acao, titulo, item) { return { item: item || '-', titulo, acao, em: new Date().toISOString() }; }
 
 async function alternar(id, marcado) {
   if (!podeEditar()) return;
   const ant = estado.itens[id] || {};
   const novo = { ...ant, done: marcado, at: marcado ? (ant.done && ant.at ? ant.at : hoje()) : null };
   estado.itens[id] = novo;
-  const ev = { item: id, titulo: POR_ID[id].titulo, acao: marcado ? 'concluiu' : 'desmarcou', em: new Date().toISOString() };
+  const ev = evento(marcado ? 'concluiu' : 'desmarcou', POR_ID[id].titulo, id);
   registrarLocal(ev);
   gravarLocal();
   atualizar();
-  if (modo === 'dona') await salvarNuvem(id, novo, ev);
+  if (modo === 'dona') await salvarNuvem({ itens: { [id]: novo } }, ev);
+}
+
+async function alternarLab(id, marcado) {
+  if (!podeEditar()) return;
+  const ant = estado.labs[id] || {};
+  const novo = marcado ? { done: true, at: ant.done && ant.at ? ant.at : hoje(), via: ant.done ? (ant.via || 'manual') : 'manual' } : { done: false, at: null, via: null };
+  estado.labs[id] = novo;
+  const ev = evento(marcado ? 'concluiu' : 'desmarcou', `Laboratório: ${LAB_POR_ID[id].titulo}`, id);
+  registrarLocal(ev);
+  gravarLocal();
+  atualizar();
+  if (modo === 'dona') await salvarNuvem({ labs: { [id]: novo } }, ev);
 }
 
 async function definirData(id, valor) {
   if (!podeEditar() || !valor) return;
-  const novo = { ...(estado.itens[id] || {}), at: valor, done: true };
   const virouFeito = !feito(id);
+  const novo = { ...(estado.itens[id] || {}), at: valor, done: true };
   estado.itens[id] = novo;
-  const ev = virouFeito ? { item: id, titulo: POR_ID[id].titulo, acao: 'concluiu', em: new Date().toISOString() } : null;
+  const ev = virouFeito ? evento('concluiu', POR_ID[id].titulo, id) : null;
   if (ev) registrarLocal(ev);
   gravarLocal();
   atualizar();
-  if (modo === 'dona') await salvarNuvem(id, novo, ev);
+  if (modo === 'dona') await salvarNuvem({ itens: { [id]: novo } }, ev);
 }
 
 async function definirBadge(input) {
@@ -780,16 +1277,82 @@ async function definirBadge(input) {
   if ((ant.badge || '') === valor) return;
   const novo = { ...ant, badge: valor || null };
   estado.itens[id] = novo;
-  const ev = valor ? { item: id, titulo: POR_ID[id].titulo, acao: 'badge', em: new Date().toISOString() } : null;
+  const ev = valor ? evento('badge', POR_ID[id].titulo, id) : null;
   if (ev) registrarLocal(ev);
   gravarLocal();
   atualizar();
-  if (modo === 'dona') await salvarNuvem(id, novo, ev);
+  if (modo === 'dona') await salvarNuvem({ itens: { [id]: novo } }, ev);
+}
+
+/* ---------- PDI ---------- */
+function normalizarPdi(v) {
+  const m = String(v || '').trim().match(/^(?:https?:\/\/)?([a-z0-9-]+)\.service-now\.com\/?.*$/i);
+  return m ? `https://${m[1].toLowerCase()}.service-now.com` : '';
+}
+
+async function salvarPdi(valor) {
+  const url = normalizarPdi(valor);
+  if (!url) {
+    estado.pdi = { ...estado.pdi, erro: 'Endereço inválido. Use o formato https://dev123456.service-now.com.' };
+    atualizar();
+    return;
+  }
+  pdiUrl = url;
+  gravarPdiLocal(url);
+  estado.pdi = { ...estado.pdi, erro: null };
+  atualizar();
+  if (modo === 'dona') {
+    try { await fb.fs.setDoc(fb.privRef, { url, atualizadoEm: fb.fs.serverTimestamp() }); }
+    catch (e) { erroSync(e); }
+  }
+}
+
+async function verificarPdi() {
+  if (!podeEditar() || !pdiUrl || verificando) return;
+  verificando = true;
+  atualizar();
+  let resposta = null;
+  try {
+    const r = await fetch(pdiUrl + CAMINHO_API, { headers: { Accept: 'application/json' }, cache: 'no-store' });
+    if (r.status === 404) throw Object.assign(new Error('404'), { motivo: 'api' });
+    if (!r.ok) throw new Error(String(r.status));
+    const j = await r.json();
+    resposta = (j && j.result) ? j.result : j;
+    if (!resposta || typeof resposta.labs !== 'object') throw Object.assign(new Error('formato'), { motivo: 'api' });
+  } catch (e) {
+    verificando = false;
+    estado.pdi = { ...estado.pdi, erro: e.motivo === 'api'
+      ? 'A PDI respondeu, mas a API Rota Labs não foi encontrada. Ela precisa estar instalada na PDI (veja o README).'
+      : 'Não consegui falar com a PDI. Ela pode estar hibernando: acorde em developer.servicenow.com e tente de novo.' };
+    gravarLocal();
+    atualizar();
+    return;
+  }
+  verificando = false;
+  const agora = new Date().toISOString();
+  const novos = {};
+  LABS.forEach(l => {
+    if (resposta.labs[l.id] === true && !labFeito(l.id)) novos[l.id] = { done: true, at: hoje(), via: 'pdi' };
+  });
+  Object.assign(estado.labs, novos);
+  const encontrados = LABS.filter(l => resposta.labs[l.id] === true).length;
+  estado.pdi = { ultima: agora, encontrados, erro: null };
+  const ev = evento('verificou', `${encontrados} de ${LABS.length} laboratórios encontrados`);
+  registrarLocal(ev);
+  gravarLocal();
+  atualizar();
+  if (modo === 'dona') {
+    const pacote = { pdi: estado.pdi };
+    if (Object.keys(novos).length) pacote.labs = novos;
+    await salvarNuvem(pacote, ev);
+  }
 }
 
 function irPara(id) {
-  const card = $(`#item-${id}`);
+  const card = $(`#item-${id}`) || $(`#lab-${id}`);
   if (!card) return;
+  const pag = card.closest('.pagina').dataset.pagina;
+  if (paginaAtual() !== pag) { history.pushState(null, '', `#/${pag}`); mostrarPagina(false); }
   card.scrollIntoView({ behavior: reduzirMov ? 'auto' : 'smooth', block: 'center' });
   card.querySelector('.chk').focus({ preventScroll: true });
   card.classList.remove('pulso');
@@ -798,7 +1361,7 @@ function irPara(id) {
 }
 
 function baixarBackup() {
-  const dados = { geradoEm: new Date().toISOString(), itens: estado.itens, historico: estado.log };
+  const dados = { geradoEm: new Date().toISOString(), itens: estado.itens, labs: estado.labs, pdi: estado.pdi, historico: estado.log };
   const url = URL.createObjectURL(new Blob([JSON.stringify(dados, null, 2)], { type: 'application/json' }));
   const a = el('a', { href: url, download: `rota-servicenow-${hoje()}.json` });
   document.body.append(a);
@@ -822,10 +1385,10 @@ function erroSync(e) {
   desenharSync();
 }
 
-async function salvarNuvem(id, dados, ev) {
+async function salvarNuvem(dados, ev) {
   const { setDoc, addDoc, serverTimestamp } = fb.fs;
   try {
-    await setDoc(fb.docRef, { itens: { [id]: dados }, atualizadoEm: serverTimestamp() }, { merge: true });
+    await setDoc(fb.docRef, { ...dados, atualizadoEm: serverTimestamp() }, { merge: true });
     if (ev) await addDoc(fb.histRef, { item: ev.item, titulo: ev.titulo, acao: ev.acao, em: serverTimestamp() });
     erroAtual = '';
     desenharSync();
@@ -836,11 +1399,13 @@ function ligarDocumento() {
   const { doc, collection, onSnapshot, query, orderBy, limit } = fb.fs;
   fb.docRef = doc(fb.db, 'roadmaps', DOC_ROTA);
   fb.histRef = collection(fb.db, 'roadmaps', DOC_ROTA, 'historico');
+  fb.privRef = doc(fb.db, 'privado', 'pdi');
   onSnapshot(fb.docRef, snap => {
     if (snap.exists()) {
       const d = snap.data();
-      donaUid = d.donaUid || null;
       estado.itens = { ...itensIniciais(), ...(d.itens || {}) };
+      estado.labs = d.labs || {};
+      estado.pdi = { ...(d.pdi || {}), erro: estado.pdi.erro || null };
       gravarLocal();
     }
     atualizar();
@@ -860,9 +1425,19 @@ async function criarRota() {
   const { setDoc, addDoc, serverTimestamp } = fb.fs;
   const local = lerLocal();
   const itens = { ...itensIniciais(), ...((local && local.itens) || {}) };
-  await setDoc(fb.docRef, { donaUid: usuario.uid, itens, criadoEm: serverTimestamp(), atualizadoEm: serverTimestamp() });
+  const labs = (local && local.labs) || {};
+  const pdi = (local && local.pdi) || {};
+  delete pdi.erro;
+  await setDoc(fb.docRef, { donaUid: usuario.uid, itens, labs, pdi, criadoEm: serverTimestamp(), atualizadoEm: serverTimestamp() });
   await addDoc(fb.histRef, { item: '-', titulo: '', acao: 'importou', em: serverTimestamp() });
-  donaUid = usuario.uid;
+}
+
+async function carregarPdiPrivada() {
+  try {
+    const s = await fb.fs.getDoc(fb.privRef);
+    if (s.exists() && s.data().url) { pdiUrl = s.data().url; gravarPdiLocal(pdiUrl); }
+    else if (pdiUrl) await fb.fs.setDoc(fb.privRef, { url: pdiUrl, atualizadoEm: fb.fs.serverTimestamp() });
+  } catch (e) { erroSync(e); }
 }
 
 async function decidirModo() {
@@ -871,12 +1446,12 @@ async function decidirModo() {
   try {
     const snap = await fb.fs.getDoc(fb.docRef);
     if (snap.exists()) {
-      donaUid = snap.data().donaUid || null;
-      modo = usuario.uid === donaUid ? 'dona' : 'outra';
+      modo = usuario.uid === (snap.data().donaUid || null) ? 'dona' : 'outra';
     } else {
       await criarRota();
       modo = 'dona';
     }
+    if (modo === 'dona') await carregarPdiPrivada();
   } catch (e) {
     const negado = String((e && e.code) || '').includes('permission-denied');
     modo = negado ? 'configurar' : 'leitura';
@@ -894,7 +1469,7 @@ async function iniciarNuvem() {
       import(base + 'firebase-firestore.js'),
     ]);
     const app = appM.initializeApp(cfg.firebase);
-    fb = { auth: authM.getAuth(app), db: fsM.getFirestore(app), au: authM, fs: fsM, docRef: null, histRef: null };
+    fb = { auth: authM.getAuth(app), db: fsM.getFirestore(app), au: authM, fs: fsM, docRef: null, histRef: null, privRef: null };
     ligarDocumento();
     authM.onAuthStateChanged(fb.auth, async u => { usuario = u; await decidirModo(); });
   } catch (e) {
@@ -908,13 +1483,16 @@ async function iniciarNuvem() {
 /* ---------- eventos ---------- */
 document.addEventListener('change', e => {
   const t = e.target;
-  if (t.classList.contains('chk')) alternar(t.dataset.id, t.checked);
+  if (t.classList.contains('chk-lab')) alternarLab(t.dataset.id, t.checked);
+  else if (t.classList.contains('chk')) alternar(t.dataset.id, t.checked);
   else if (t.classList.contains('in-data')) definirData(t.dataset.id, t.value);
   else if (t.classList.contains('in-badge')) definirBadge(t);
 });
 
+$('#pdi-form').addEventListener('submit', e => { e.preventDefault(); salvarPdi($('#pdi-url').value); });
+
 document.addEventListener('click', async e => {
-  const t = e.target.closest('button, a[data-ir]');
+  const t = e.target.closest('button, a[data-ir], a[data-ir-lab]');
   if (!t) return;
   if (t.classList.contains('abrir')) {
     const aberto = t.getAttribute('aria-expanded') === 'true';
@@ -923,13 +1501,15 @@ document.addEventListener('click', async e => {
   } else if (t.id === 'marcar-prox') {
     const p = proximoItem();
     if (p) await alternar(p.id, true);
-  } else if (t.dataset.ir) {
+  } else if (t.dataset.ir || t.dataset.irLab) {
     e.preventDefault();
-    irPara(t.dataset.ir);
-  } else if (t.id === 'entrar') {
+    irPara(t.dataset.ir || t.dataset.irLab);
+  } else if (t.id === 'verificar') {
+    await verificarPdi();
+  } else if (t.dataset.acao === 'entrar') {
     try { await fb.au.signInWithPopup(fb.auth, new fb.au.GoogleAuthProvider()); }
     catch (err) { erroSync(err); }
-  } else if (t.id === 'sair') {
+  } else if (t.dataset.acao === 'sair') {
     await fb.au.signOut(fb.auth);
   } else if (t.id === 'copiar-uid') {
     try { await navigator.clipboard.writeText(usuario.uid); t.textContent = 'UID copiado'; }
@@ -960,6 +1540,7 @@ window.addEventListener('scroll', () => { tip.hidden = true; }, { passive: true 
 
 /* ---------- início ---------- */
 construir();
+mostrarPagina(false);
 atualizar();
 if (nuvemConfigurada) iniciarNuvem();
 </script>

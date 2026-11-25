@@ -24,5 +24,10 @@ service cloud.firestore {
         allow update, delete: if false;
       }
     }
+
+    // Endereço da PDI: só a dona lê e escreve.
+    match /privado/{doc} {
+      allow read, write: if ehDona();
+    }
   }
 }
