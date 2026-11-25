@@ -478,10 +478,11 @@ const REGRAS = {
 };
 const UNIVERSITY = 'https://learning.servicenow.com';
 const CHAVE_LOCAL = 'rota-servicenow-v1';
+const DOC_ROTA = 'principal';   /* documento único da rota no Firestore: roadmaps/principal */
 const VERSAO_FIREBASE = '13.4.0';
 
 /* ---------- configuração (firebase-config.js é opcional) ---------- */
-let cfg = { dona: 'Daiane Cerqueira', ownerUid: '', firebase: null };
+let cfg = { dona: 'Daiane Cerqueira', firebase: null };
 try {
   const m = await import('./firebase-config.js');
   if (m && m.default) cfg = { ...cfg, ...m.default };
@@ -510,11 +511,12 @@ const estado = {
   log: (salvo && Array.isArray(salvo.log)) ? salvo.log : [],
 };
 
-/* modos: local | conectando | leitura | semdona | configurar | dona | outra */
+/* modos: local | conectando | leitura | configurar | dona | outra */
 let modo = nuvemConfigurada ? 'conectando' : 'local';
 let erroAtual = '';
 let fb = null;
 let usuario = null;
+let donaUid = null;
 
 /* ---------- utilitários ---------- */
 const $ = s => document.querySelector(s);
@@ -710,14 +712,13 @@ function desenharSync() {
     local: ['Salvo neste navegador', ''],
     conectando: ['Conectando ao Firebase', ''],
     leitura: ['Somente leitura', ''],
-    semdona: ['Falta configurar o seu UID', ''],
-    configurar: ['Falta configurar o seu UID', ''],
+    configurar: ['Falta liberar o seu UID nas regras', ''],
     dona: ['Salvo na nuvem', 'ok'],
     outra: ['Esta conta só pode ver', ''],
   };
   const [txt, tom] = erroAtual ? [erroAtual, 'erro'] : (estados[modo] || ['', '']);
   s.append(el('span', { class: 'sync-estado', 'data-tom': tom, text: txt }));
-  if (modo === 'leitura' || modo === 'semdona') s.append(el('button', { class: 'btn', type: 'button', id: 'entrar', text: 'Entrar com Google' }));
+  if (modo === 'leitura') s.append(el('button', { class: 'btn', type: 'button', id: 'entrar', text: 'Entrar com Google' }));
   if (modo === 'dona' || modo === 'configurar' || modo === 'outra') s.append(el('button', { class: 'btn', type: 'button', id: 'sair', text: 'Sair' }));
 
   const aviso = $('#aviso-uid');
@@ -725,7 +726,7 @@ function desenharSync() {
     aviso.hidden = false;
     aviso.innerHTML = '';
     aviso.append(
-      el('p', {}, 'Seu UID é ', el('code', { text: usuario.uid }), '. Cole esse valor em ', el('code', { text: 'ownerUid' }), ' no firebase-config.js e no lugar de ', el('code', { text: 'SEU_UID' }), ' no firestore.rules. Depois publique as regras no console do Firebase e recarregue a página.'),
+      el('p', {}, 'Seu UID é ', el('code', { text: usuario.uid }), '. Coloque esse valor no lugar de ', el('code', { text: 'SEU_UID' }), ' no firestore.rules, publique as regras no console do Firebase e recarregue a página.'),
       el('button', { class: 'btn', type: 'button', id: 'copiar-uid', text: 'Copiar UID' }),
     );
   } else {
@@ -831,13 +832,14 @@ async function salvarNuvem(id, dados, ev) {
   } catch (e) { erroSync(e); }
 }
 
-function ligarDocumento(uid) {
+function ligarDocumento() {
   const { doc, collection, onSnapshot, query, orderBy, limit } = fb.fs;
-  fb.docRef = doc(fb.db, 'roadmaps', uid);
-  fb.histRef = collection(fb.db, 'roadmaps', uid, 'historico');
+  fb.docRef = doc(fb.db, 'roadmaps', DOC_ROTA);
+  fb.histRef = collection(fb.db, 'roadmaps', DOC_ROTA, 'historico');
   onSnapshot(fb.docRef, snap => {
     if (snap.exists()) {
       const d = snap.data();
+      donaUid = d.donaUid || null;
       estado.itens = { ...itensIniciais(), ...(d.itens || {}) };
       gravarLocal();
     }
@@ -852,24 +854,34 @@ function ligarDocumento(uid) {
   }, erroSync);
 }
 
-async function migrarSeVazio() {
-  const { getDoc, setDoc, addDoc, serverTimestamp } = fb.fs;
-  try {
-    const snap = await getDoc(fb.docRef);
-    if (snap.exists()) return;
-    const local = lerLocal();
-    const itens = { ...itensIniciais(), ...((local && local.itens) || {}) };
-    await setDoc(fb.docRef, { itens, criadoEm: serverTimestamp(), atualizadoEm: serverTimestamp() });
-    await addDoc(fb.histRef, { item: '-', titulo: '', acao: 'importou', em: serverTimestamp() });
-  } catch (e) { erroSync(e); }
+/* Primeiro login da dona: cria roadmaps/principal com o que já estava marcado neste navegador.
+   As regras do Firestore só deixam criar se o UID for o dela; se negar, falta liberar o UID. */
+async function criarRota() {
+  const { setDoc, addDoc, serverTimestamp } = fb.fs;
+  const local = lerLocal();
+  const itens = { ...itensIniciais(), ...((local && local.itens) || {}) };
+  await setDoc(fb.docRef, { donaUid: usuario.uid, itens, criadoEm: serverTimestamp(), atualizadoEm: serverTimestamp() });
+  await addDoc(fb.histRef, { item: '-', titulo: '', acao: 'importou', em: serverTimestamp() });
+  donaUid = usuario.uid;
 }
 
 async function decidirModo() {
   erroAtual = '';
-  if (!usuario) modo = cfg.ownerUid ? 'leitura' : 'semdona';
-  else if (!cfg.ownerUid) modo = 'configurar';
-  else if (usuario.uid === cfg.ownerUid) { modo = 'dona'; await migrarSeVazio(); }
-  else modo = 'outra';
+  if (!usuario) { modo = 'leitura'; atualizar(); return; }
+  try {
+    const snap = await fb.fs.getDoc(fb.docRef);
+    if (snap.exists()) {
+      donaUid = snap.data().donaUid || null;
+      modo = usuario.uid === donaUid ? 'dona' : 'outra';
+    } else {
+      await criarRota();
+      modo = 'dona';
+    }
+  } catch (e) {
+    const negado = String((e && e.code) || '').includes('permission-denied');
+    modo = negado ? 'configurar' : 'leitura';
+    if (!negado) erroSync(e);
+  }
   atualizar();
 }
 
@@ -883,7 +895,7 @@ async function iniciarNuvem() {
     ]);
     const app = appM.initializeApp(cfg.firebase);
     fb = { auth: authM.getAuth(app), db: fsM.getFirestore(app), au: authM, fs: fsM, docRef: null, histRef: null };
-    if (cfg.ownerUid) ligarDocumento(cfg.ownerUid);
+    ligarDocumento();
     authM.onAuthStateChanged(fb.auth, async u => { usuario = u; await decidirModo(); });
   } catch (e) {
     modo = 'local';

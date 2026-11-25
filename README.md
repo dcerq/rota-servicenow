@@ -1,56 +1,59 @@
 # Rota ServiceNow: ITAM, ITOM e CMDB
 
-Checklist de estudos ServiceNow em cinco fases (base da plataforma, CMDB e CSDM, ITAM, ITOM Visibility e próximas camadas). Página estática: roda no GitHub Pages e guarda o progresso no Firebase.
+Checklist de estudos ServiceNow em cinco fases: base da plataforma, CMDB e CSDM, ITAM, ITOM Visibility e próximas camadas. É uma página estática publicada no GitHub Pages, com o progresso salvo no Firebase.
+
+Página: https://dcerq.github.io/rota-servicenow/
 
 ## Arquivos
 
 | Arquivo | Para que serve |
 | --- | --- |
 | `index.html` | A página inteira. A lista de fases e itens fica no começo do `<script>`, no bloco `EDITE AQUI`. |
-| `firebase-config.js` | Dados do seu projeto Firebase e o seu UID. Enquanto tiver `COLE_AQUI`, a página salva só no navegador. |
-| `firestore.rules` | Regras de segurança do Firestore. Só você escreve; qualquer pessoa com o link pode ler. |
+| `firebase-config.js` | Configuração do app Web do Firebase. Enquanto tiver `COLE_AQUI`, a página salva só no navegador. |
+| `firestore.rules` | Cópia das regras de segurança publicadas no Firestore. Só você escreve; qualquer pessoa com o link pode ler. |
 
-## 1. Publicar no GitHub Pages
+## O que já está configurado
 
-1. Crie um repositório público, por exemplo `rota-servicenow`.
-2. Envie os quatro arquivos para a raiz da branch `main`.
-3. No repositório: **Settings > Pages > Build and deployment**. Em *Source*, escolha **Deploy from a branch**, branch `main`, pasta `/ (root)`, e salve.
-4. Em um ou dois minutos a página fica em `https://SEU-USUARIO.github.io/rota-servicenow/`.
+- Repositório `dcerq/rota-servicenow`, com GitHub Pages saindo da branch `main`.
+- Projeto Firebase `rota-servicenow` (plano Spark, gratuito) com:
+  - app Web `rota-web`;
+  - login com Google ativado e o domínio `dcerq.github.io` autorizado;
+  - Firestore criado em `southamerica-east1` (São Paulo), em modo de produção.
 
-Até aqui a página já funciona, salvando no navegador que você estiver usando.
+## Colar a configuração do Firebase (feito uma vez)
 
-## 2. Ligar o Firebase (para salvar na nuvem)
+1. No console do Firebase, abra **Configurações do projeto > Geral > Seus apps > rota-web**.
+2. Em **Configuração do SDK**, escolha **Configuração** e copie o bloco que vai de `const firebaseConfig = {` até `};`.
+3. No GitHub, abra o `firebase-config.js`, clique no lápis para editar e cole esse bloco no lugar do bloco de exemplo.
+4. Clique em **Commit changes**.
 
-1. Em [console.firebase.google.com](https://console.firebase.google.com), crie um projeto (o Google Analytics pode ficar desligado).
-2. Adicione um app **Web** (ícone `</>`). Não precisa marcar o Firebase Hosting. Copie o objeto `firebaseConfig` que aparece e cole no campo `firebase` do `firebase-config.js`.
-3. **Authentication**: ative o provedor **Google**. Em *Settings > Authorized domains*, adicione `SEU-USUARIO.github.io`.
-4. **Firestore Database**: crie o banco em **modo de produção**. Para a região, `southamerica-east1` (São Paulo) fica mais perto de você. A região não muda depois.
-5. Envie o `firebase-config.js` atualizado para o GitHub, abra a página e clique em **Entrar com Google**.
-6. A página mostra o seu UID. Cole esse valor:
-   - em `ownerUid`, no `firebase-config.js`;
-   - no lugar de `SEU_UID`, no `firestore.rules`.
-7. No console, abra **Firestore Database > Regras**, cole o conteúdo do `firestore.rules` e clique em **Publicar**.
-8. Envie o `firebase-config.js` de novo para o GitHub e recarregue a página. O selo no topo deve mostrar **Salvo na nuvem**.
+## Liberar a sua conta nas regras (feito uma vez)
 
-No primeiro login com tudo configurado, se a nuvem estiver vazia, o que você já tinha marcado neste navegador é enviado para o Firestore.
+1. Abra a página e clique em **Entrar com Google**.
+2. A página mostra o seu UID. Coloque esse valor no lugar de `SEU_UID` no `firestore.rules`.
+3. No console, abra **Firestore Database > Regras**, cole o conteúdo do arquivo e clique em **Publicar**.
+4. Recarregue a página. O selo no topo deve mostrar **Salvo na nuvem**.
 
-### Sobre segurança
+No primeiro login com tudo liberado, o que você já tinha marcado naquele navegador é enviado para o Firestore.
+
+## Segurança
 
 - A `apiKey` do Firebase identifica o projeto e pode ficar num repositório público. Quem protege os dados são as regras.
 - Não use o "modo de teste" do Firestore: ele deixa qualquer pessoa escrever no banco e expira sozinho.
-- Para deixar o progresso privado, troque `allow read: if true;` por `allow read: if ehDona();` nos dois lugares do `firestore.rules`. Quem abrir a página sem estar logado como você verá a lista sem marcações.
+- Para deixar o progresso privado, troque `allow read: if true;` por `allow read: if ehDona();` nos dois lugares do `firestore.rules` e publique de novo.
 
 ## Como os dados ficam no Firestore
 
 ```
-roadmaps/{seu UID}
+roadmaps/principal
+  donaUid
   itens: { "cis-df": { done: true, at: "2026-12-10", badge: "https://www.credly.com/badges/..." }, ... }
   atualizadoEm
-roadmaps/{seu UID}/historico/{evento}
+roadmaps/principal/historico/{evento}
   item, titulo, acao (concluiu | desmarcou | badge | importou), em
 ```
 
-O botão **Baixar backup (JSON)** no rodapé exporta tudo, caso você queira guardar uma cópia.
+O plano gratuito do Firestore não tem backup automático. Para guardar uma cópia, use o botão **Baixar backup (JSON)** no rodapé da página.
 
 ## Editar a rota
 

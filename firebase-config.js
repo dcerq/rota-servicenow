@@ -1,23 +1,20 @@
-// Configuração da Rota ServiceNow.
-// Enquanto apiKey tiver "COLE_AQUI", a página funciona no modo local (salva só no navegador).
+// Configuração do Firebase da Rota ServiceNow.
 //
-// 1. No console do Firebase, abra Configurações do projeto > Seus apps > app Web
-//    e copie o objeto firebaseConfig inteiro para o campo "firebase" abaixo.
-// 2. Abra a página publicada, clique em "Entrar com Google" e copie o UID que aparece.
-// 3. Cole o UID em ownerUid (aqui) e em SEU_UID (no firestore.rules).
+// No console do Firebase: Configurações do projeto > Geral > Seus apps > rota-web,
+// em "Configuração do SDK", escolha a opção "Configuração". Copie o bloco inteiro,
+// de "const firebaseConfig = {" até "};", e cole no lugar do bloco de exemplo abaixo.
 //
-// A apiKey do Firebase não é segredo: ela identifica o projeto. Quem protege os dados
-// são as regras do Firestore (firestore.rules).
+// Enquanto apiKey for "COLE_AQUI", a página funciona no modo local (salva só no navegador).
+// A apiKey do Firebase identifica o projeto e pode ficar num repositório público.
+// Quem protege os dados são as regras do Firestore (firestore.rules).
+
+const firebaseConfig = {
+  apiKey: "COLE_AQUI",
+  authDomain: "rota-servicenow.firebaseapp.com",
+  projectId: "rota-servicenow",
+};
 
 export default {
-  dona: 'Daiane Cerqueira',
-  ownerUid: '',
-  firebase: {
-    apiKey: 'COLE_AQUI',
-    authDomain: 'COLE_AQUI.firebaseapp.com',
-    projectId: 'COLE_AQUI',
-    storageBucket: 'COLE_AQUI',
-    messagingSenderId: 'COLE_AQUI',
-    appId: 'COLE_AQUI',
-  },
+  dona: "Daiane Cerqueira",
+  firebase: firebaseConfig,
 };
