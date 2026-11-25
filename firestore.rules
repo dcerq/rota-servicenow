@@ -1,0 +1,26 @@
+rules_version = '2';
+
+// Troque SEU_UID pelo UID que aparece na página depois do primeiro login.
+// Depois cole este arquivo em Firestore Database > Regras e clique em Publicar.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function ehDona() {
+      return request.auth != null && request.auth.uid == "SEU_UID";
+    }
+
+    match /roadmaps/{dona} {
+      // Leitura pública: qualquer pessoa com o link vê o seu progresso (bom para o LinkedIn).
+      // Para deixar privado, troque "true" por "ehDona()" aqui e no histórico.
+      allow read: if true;
+      allow write: if ehDona() && request.auth.uid == dona;
+
+      match /historico/{evento} {
+        allow read: if true;
+        allow create: if ehDona() && request.auth.uid == dona;
+        allow update, delete: if false;
+      }
+    }
+  }
+}
