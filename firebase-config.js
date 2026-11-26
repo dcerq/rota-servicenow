@@ -9,9 +9,12 @@
 // Quem protege os dados são as regras do Firestore (firestore.rules).
 
 const firebaseConfig = {
-  apiKey: "COLE_AQUI",
-  authDomain: "rota-servicenow.firebaseapp.com",
-  projectId: "rota-servicenow",
+  apiKey: "AIzaSyAvDPcQAQCIfkq4_8fxYtxi6sOj9X4Ti3M",
+  authDomain: "rota-servicenow-a8cf3.firebaseapp.com",
+  projectId: "rota-servicenow-a8cf3",
+  storageBucket: "rota-servicenow-a8cf3.firebasestorage.app",
+  messagingSenderId: "354608777072",
+  appId: "1:354608777072:web:9304266cf5169cb027b1b5"
 };
 
 export default {
