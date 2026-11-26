@@ -17,6 +17,7 @@ Página: https://dcerq.github.io/rota-servicenow/
 | `firebase-config.js` | Configuração do app Web do Firebase. Enquanto tiver `COLE_AQUI`, a página salva só no navegador. |
 | `firestore.rules` | Cópia das regras de segurança publicadas no Firestore. Só você escreve; qualquer pessoa com o link pode ler o progresso. O endereço da PDI fica num documento só seu. |
 | `pdi/rota-labs-api.js` | Script da API Rota Labs, que fica na PDI e responde quais laboratórios foram feitos. |
+| `pdi/instalar-rota-labs.js` | Instalador para rodar em Scripts - Background: cria a API, o recurso e a regra de CORS. |
 
 ## Verificação dos laboratórios na PDI
 
@@ -25,6 +26,15 @@ A página não guarda usuário nem senha da PDI. A verificação funciona assim:
 1. Na PDI existe a Scripted REST API **Rota Labs**, com o recurso `GET /status`. Ela só lê e devolve, para cada laboratório, `true` ou `false`. Nenhum registro sai da instância.
 2. Uma regra de CORS na PDI libera esse recurso apenas para `https://dcerq.github.io`.
 3. Em **Laboratórios**, você salva o endereço da PDI (fica só para você) e clica em **Verificar na PDI**.
+
+A API já está instalada na **dev196598**, no caminho `/api/1682697/rota_labs/status`.
+
+### Instalar em outra PDI
+
+1. Na PDI, abra **System Definition > Scripts - Background**, escopo `global`.
+2. Cole o conteúdo de `pdi/instalar-rota-labs.js` e clique em **Run script**. Ele cria a API, o recurso e a regra de CORS. Pode rodar de novo, que ele só atualiza.
+3. O resultado mostra uma linha `ROTA LABS OK | ... | recurso: /api/NNN/rota_labs/status`.
+4. Em **Laboratórios**, salve o endereço completo: `https://devXXXXXX.service-now.com/api/NNN/rota_labs/status`. O número `NNN` muda de instância para instância.
 
 Limites que valem saber:
 
@@ -36,7 +46,7 @@ Limites que valem saber:
 ## O que já está configurado
 
 - Repositório `dcerq/rota-servicenow`, com GitHub Pages saindo da branch `main`.
-- Projeto Firebase `rota-servicenow` (plano Spark, gratuito) com:
+- Projeto Firebase `rota-servicenow-a8cf3`, na conta kennash.mash@gmail.com (plano Spark, gratuito), com:
   - app Web `rota-web`;
   - login com Google ativado e o domínio `dcerq.github.io` autorizado;
   - Firestore criado em `southamerica-east1` (São Paulo), em modo de produção.
