@@ -1175,7 +1175,7 @@ function desenharSync() {
     local: ['Salvo neste navegador', ''],
     conectando: ['Conectando ao Firebase', ''],
     leitura: ['Somente leitura', ''],
-    configurar: ['Falta liberar o seu UID nas regras', ''],
+    configurar: ['Regras do Firestore bloquearam', 'erro'],
     dona: ['Salvo na nuvem', 'ok'],
     outra: ['Esta conta só pode ver', ''],
   };
@@ -1193,8 +1193,7 @@ function desenharSync() {
     aviso.hidden = false;
     aviso.innerHTML = '';
     aviso.append(
-      el('p', {}, 'Seu UID é ', el('code', { text: usuario.uid }), '. Coloque esse valor no lugar de ', el('code', { text: 'SEU_UID' }), ' no firestore.rules, publique as regras no console do Firebase e recarregue a página.'),
-      el('button', { class: 'btn', type: 'button', id: 'copiar-uid', text: 'Copiar UID' }),
+      el('p', { text: 'O Firestore não deixou criar a rota com esta conta. Confira se as regras do arquivo firestore.rules estão publicadas no console do Firebase e recarregue a página.' }),
     );
   } else {
     aviso.hidden = true;
@@ -1378,7 +1377,7 @@ function baixarBackup() {
 /* ---------- Firebase ---------- */
 function mensagemErro(e) {
   const c = (e && e.code) || '';
-  if (c.includes('permission-denied')) return 'Não salvou: sem permissão. Confira o UID no firestore.rules.';
+  if (c.includes('permission-denied')) return 'Não salvou: o Firestore recusou. Confira as regras publicadas.';
   if (c.includes('unauthorized-domain')) return 'Login bloqueado: autorize este domínio no Firebase Authentication.';
   if (c.includes('popup-closed') || c.includes('cancelled-popup')) return '';
   if (c.includes('unavailable')) return 'Sem conexão com o Firebase. Tente de novo em instantes.';
@@ -1425,7 +1424,7 @@ function ligarDocumento() {
 }
 
 /* Primeiro login da dona: cria roadmaps/principal com o que já estava marcado neste navegador.
-   As regras do Firestore só deixam criar se o UID for o dela; se negar, falta liberar o UID. */
+   As regras do Firestore deixam criar uma vez só; quem cria vira a dona (donaUid). */
 async function criarRota() {
   const { setDoc, addDoc, serverTimestamp } = fb.fs;
   const local = lerLocal();

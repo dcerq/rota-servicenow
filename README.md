@@ -58,14 +58,11 @@ Limites que valem saber:
 3. No GitHub, abra o `firebase-config.js`, clique no lápis para editar e cole esse bloco no lugar do bloco de exemplo.
 4. Clique em **Commit changes**.
 
-## Liberar a sua conta nas regras (feito uma vez)
+## Quem pode editar
 
-1. Abra a página e clique em **Entrar com Google**.
-2. A página mostra o seu UID. Coloque esse valor no lugar de `SEU_UID` no `firestore.rules`.
-3. No console, abra **Firestore Database > Regras**, cole o conteúdo do arquivo e clique em **Publicar**.
-4. Recarregue a página. O selo no topo deve mostrar **Salvo na nuvem**.
+A primeira conta Google que entra na página depois das regras publicadas cria o documento `roadmaps/principal` e vira a dona (campo `donaUid`). As regras não deixam ninguém trocar a dona depois. Qualquer outra conta só consegue ver.
 
-No primeiro login com tudo liberado, o que você já tinha marcado naquele navegador é enviado para o Firestore.
+Hoje a dona é a conta que entrou em 25/11/2026. Se um dia precisar trocar, apague o documento `roadmaps/principal` no console do Firestore (perde o progresso salvo na nuvem; baixe o backup antes) e entre com a conta nova.
 
 ## Segurança
 

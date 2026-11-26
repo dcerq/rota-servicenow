@@ -1,26 +1,36 @@
 rules_version = '2';
 
-// Só a conta dona escreve. Troque SEU_UID pelo UID que a página mostra no primeiro login
-// e publique em Firestore Database > Regras.
+// Regras da Rota ServiceNow.
+// A conta que cria roadmaps/principal vira a dona (campo donaUid) e ninguém troca depois.
+// Publique em Firestore Database > Regras.
 
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    function rotaPrincipal() {
+      return /databases/$(database)/documents/roadmaps/principal;
+    }
     function ehDona() {
-      return request.auth != null && request.auth.uid == "SEU_UID";
+      return request.auth != null
+        && exists(rotaPrincipal())
+        && get(rotaPrincipal()).data.donaUid == request.auth.uid;
     }
 
     match /roadmaps/{rota} {
-      // Leitura pública: qualquer pessoa com o link vê o seu progresso (bom para o LinkedIn).
+      // Leitura pública: qualquer pessoa com o link vê o progresso (bom para o LinkedIn).
       // Para deixar privado, troque "true" por "ehDona()" aqui e no histórico.
       allow read: if true;
-      allow create: if ehDona() && request.resource.data.donaUid == request.auth.uid;
-      allow update: if ehDona();
+      allow create: if rota == 'principal'
+        && request.auth != null
+        && request.resource.data.donaUid == request.auth.uid;
+      allow update: if rota == 'principal'
+        && ehDona()
+        && request.resource.data.donaUid == resource.data.donaUid;
       allow delete: if false;
 
       match /historico/{evento} {
         allow read: if true;
-        allow create: if ehDona();
+        allow create: if rota == 'principal' && ehDona();
         allow update, delete: if false;
       }
     }
